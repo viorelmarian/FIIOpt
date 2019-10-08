@@ -10,8 +10,7 @@ class m_courses {
         $stmt->bind_param("s", $src);
         $stmt->execute();
         return $stmt->get_result();    
-    }
-    
+    }    
     // function getById($id) {    
     //     $stmt = $this->conn->prepare("SELECT * FROM `courses` WHERE `id` = ?");        
     //     $stmt->bind_param("i", $id);

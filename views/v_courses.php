@@ -69,8 +69,49 @@
         <span class = "row" id="root">  
         </span>
     </div>
+    <!-- Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalLabel">Confirm Choice</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>After confirmation this action can't be undone!</p>
+                    <p>You can see yout choices in <b>{ Assigned_Opt }</b> tab.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="saveCourseChoice()">Confirm</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="infoModalStatus">Success</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="infoModalMsg">
+                    <p>Your option has been registered!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
         function getCourses() {
+            console.log("GET Courses")
             var request = new XMLHttpRequest()
 
             request.open('GET', 'courses/get/' + search.value, true);
@@ -143,6 +184,8 @@
                         const btn2 = document.createElement('a')
                         btn2.setAttribute('href', '#')
                         btn2.setAttribute('class', 'btn btn-card btn-outline-success')
+                        btn2.setAttribute('id' , item.id)
+                        btn2.setAttribute('onclick', 'openConfirmationSetChoice(event)')
                         btn2.textContent = '{ Alege }'
                         
                         container.appendChild(btn2)
@@ -152,6 +195,23 @@
                 }
             }
             request.send()
+        }
+        function openConfirmationSetChoice(e) {   
+            this.choice = e.target.id
+            $("#confirmModal").modal()            
+        }
+        function saveCourseChoice() {
+            var request = new XMLHttpRequest()
+            request.open('POST', 'choices/insert/' + this.choice, true)
+            request.onload = function() {
+                var data = JSON.parse(this.response) 
+                console.log(data)   
+                $('#infoModal').modal()
+                document.getElementById("infoModalStatus").textContent = data.status + '!'
+                document.getElementById("infoModalMsg").textContent = data.msg
+            }
+            request.send()
+           
         }
     </script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

@@ -27,7 +27,9 @@ class users
         //If username was inserted
         if ($_POST["login_usr"] != NULL) { 
             //Get user info
-            $user = $users->getByUser($_POST["login_usr"])->fetch_assoc();
+            $result = $users->getByUser($_POST["login_usr"]);
+            //Fetch data in assoc array
+            $user = $result->fetch_assoc();
             //If username exists in the database  
             if ($user !== NULL) {
                 //If password was inserted
