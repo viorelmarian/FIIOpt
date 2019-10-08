@@ -40,37 +40,91 @@
         </div>            
     </nav>
     <div class = "container aligner">
-        <table class="table table-striped table-light table-container table-hover">
-            <thead class="thead-dark">
-                <tr>
-                <th scope="col">#</th>
-                <th scope="col">First</th>
-                <th scope="col">Last</th>
-                <th scope="col">Handle</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-                </tr>
-                <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-                </tr>
-                <tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="table-responsive table-container">
+            <table class="table table-striped table-light table-container table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Professor</th>
+                        <th scope="col">Year</th>
+                        <th scope="col">Package</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="root">
+                    <tr>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                    <tr>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                    <tr>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>        
     </div>
+    <script>
+        var request = new XMLHttpRequest()
+
+        request.open('GET', 'choices/get', true);
+
+        request.onload = function() {
+                var data = JSON.parse(this.response)
+
+                const row = document.getElementById('root')
+                row.innerHTML = "";
+
+                if (request.status >= 200 && request.status < 400) {
+                    data.forEach(item => {
+
+                        const tr = document.createElement('tr')
+                        row.appendChild(tr)
+
+                        const td1 = document.createElement('td')
+                        td1.innerText = item.name
+
+                        tr.appendChild(td1)
+
+                        const td2 = document.createElement('td')
+                        td2.innerText = item.professor
+
+                        tr.appendChild(td2)
+
+                        const td3 = document.createElement('td')
+                        td3.innerText = item.year
+
+                        tr.appendChild(td3)
+
+                        const td4 = document.createElement('td')
+                        td4.innerText = item.package
+
+                        tr.appendChild(td4)
+
+                        const td5 = document.createElement('td')
+                        td5.innerText = item.status
+
+                        tr.appendChild(td5)
+                    })
+                } else {
+                    console.log('error')
+                }
+            }
+        request.send()
+    </script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>

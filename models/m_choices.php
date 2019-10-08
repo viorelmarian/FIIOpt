@@ -12,8 +12,9 @@ class m_choices {
         return $stmt->get_result();    
     }    
     function insert($course) {
-        $stmt = $this->conn->prepare("INSERT INTO `choices`(`user`, `course`) VALUES (?, ?)");        
-        $stmt->bind_param("si", $_SESSION["login_usr"], $course);
+        $stmt = $this->conn->prepare("INSERT INTO `choices`(`user`, `course`, `status`) VALUES (?, ?, ?)");        
+        $status = "Pending";
+        $stmt->bind_param("sis", $_SESSION["login_usr"], $course, $status);
         $stmt->execute();
         return $stmt->get_result(); 
     }

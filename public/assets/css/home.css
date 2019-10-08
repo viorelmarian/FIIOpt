@@ -89,6 +89,7 @@ body {
 }
 .table-container {
     z-index: 1000;
+    padding: 25px;
 }
 @media screen and (max-width: 1200px) {
     #root {        

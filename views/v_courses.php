@@ -111,7 +111,6 @@
     </div>
     <script>
         function getCourses() {
-            console.log("GET Courses")
             var request = new XMLHttpRequest()
 
             request.open('GET', 'courses/get/' + search.value, true);

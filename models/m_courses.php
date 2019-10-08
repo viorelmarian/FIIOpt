@@ -5,9 +5,9 @@ class m_courses {
         $this->conn = $conn;
     }
     function get($src) {
-        $stmt = $this->conn->prepare("SELECT * FROM `courses` WHERE name LIKE ?");
+        $stmt = $this->conn->prepare("SELECT * FROM `courses` join `users` on courses.year=users.year WHERE `name` LIKE ? and `username` = ?");
         $src = '%' . $src . '%';
-        $stmt->bind_param("s", $src);
+        $stmt->bind_param("ss", $src, $_SESSION["login_usr"]);
         $stmt->execute();
         return $stmt->get_result();    
     }    
