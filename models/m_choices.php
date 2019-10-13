@@ -5,29 +5,47 @@ class m_choices {
         $this->conn = $conn;
     }
     function get() {
-        $stmt = $this->conn->prepare("SELECT * FROM `choices` WHERE user = ?");
+        $stmt = $this->conn->prepare("SELECT *  FROM    `choices` 
+                                                JOIN    `students`      ON `choices`.`student_id` = `students`.`student_id` 
+                                                WHERE   `username` = ?");
         $user = $_SESSION["login_usr"];
         $stmt->bind_param("s", $user);
         $stmt->execute();
         return $stmt->get_result();    
     }    
     function insert($course) {
-        $stmt = $this->conn->prepare("INSERT INTO `choices`(`user`, `course`, `status`) VALUES (?, ?, ?)");        
+        $stmt = $this->conn->prepare("INSERT    INTO    `choices`(`student_id`, `course_id`, `status`) 
+                                                VALUES  ((SELECT `student_id` FROM `students` WHERE `username` = ?), ?, ?)");        
         $status = "Pending";
         $stmt->bind_param("sis", $_SESSION["login_usr"], $course, $status);
         $stmt->execute();
         return $stmt->get_result(); 
     }
     function validateChoice($courseId) {
-        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM choices JOIN courses ON choices.course=courses.id 
-                                        WHERE courses.package IN (SELECT package FROM courses WHERE id = ?)
-                                        AND courses.year IN (SELECT year FROM courses WHERE id = ?)");
+        $stmt = $this->conn->prepare("SELECT COUNT(*)   FROM    `choices` 
+                                                        JOIN    `courses`           ON `choices`.`course_id` = `courses`.`course_id` 
+                                                        WHERE   `courses`.`package`   IN (
+                                                                                        SELECT  `package` 
+                                                                                        FROM    `courses` 
+                                                                                        WHERE   `course_id` = ?)
+                                                        AND     `courses`.`year`      IN (
+                                                                                        SELECT  `year` 
+                                                                                        FROM    `courses` 
+                                                                                        WHERE   `course_id` = ?)");
         $stmt->bind_param("ii", $courseId, $courseId);
         $stmt->execute();
         return $stmt->get_result();
     }
     function getChoices() {
-        $stmt = $this->conn->prepare("SELECT * FROM `choices` join courses on choices.course=courses.id WHERE user = ?");
+        $stmt = $this->conn->prepare("SELECT    `name`, 
+                                                `package`, 
+                                                `status`,
+                                                `username`,
+                                                `co`.`year`, 
+                                                `co`.`course_id`   FROM    `choices`   AS  `ch` 
+                                                                    JOIN    `courses`   AS  `co`    ON `ch`.`course_id`  = `co`.`course_id` 
+                                                                    JOIN    `students`  AS  `st`    ON `ch`.`student_id` = `st`.`student_id`
+                                                                    WHERE   `username` = ?");
         $user = $_SESSION["login_usr"];
         $stmt->bind_param("s", $user);
         $stmt->execute();

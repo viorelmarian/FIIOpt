@@ -45,34 +45,15 @@
                 <thead>
                     <tr>
                         <th scope="col">Name</th>
-                        <th scope="col">Professor</th>
+                        <th scope="col">Professor 1</th>
+                        <th scope="col">Professor 2</th>
                         <th scope="col">Year</th>
                         <th scope="col">Package</th>
                         <th scope="col">Status</th>
                     </tr>
                 </thead>
                 <tbody id="root">
-                    <tr>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                    </tr>
-                    <tr>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                    </tr>
-                    <tr>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                        <td>Cell</td>
-                    </tr>
+                    
                 </tbody>
             </table>
         </div>        
@@ -100,24 +81,31 @@
                         tr.appendChild(td1)
 
                         const td2 = document.createElement('td')
-                        td2.innerText = item.professor
+                        td2.innerText = item.professor_1
 
                         tr.appendChild(td2)
 
                         const td3 = document.createElement('td')
-                        td3.innerText = item.year
+                        if (item.professor_2) {
+                            td3.innerText = item.professor_2                            
+                        }
 
                         tr.appendChild(td3)
 
                         const td4 = document.createElement('td')
-                        td4.innerText = item.package
+                        td4.innerText = item.year
 
                         tr.appendChild(td4)
 
                         const td5 = document.createElement('td')
-                        td5.innerText = item.status
+                        td5.innerText = item.package
 
                         tr.appendChild(td5)
+
+                        const td6 = document.createElement('td')
+                        td6.innerText = item.status
+
+                        tr.appendChild(td6)
                     })
                 } else {
                     console.log('error')

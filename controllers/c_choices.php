@@ -27,13 +27,24 @@ class choices {
                 //Create model instance
                 $choices = new m_choices($db->conn);
             }
+            if (!isset($courses)) {
+                //Create model instance
+                $courses = new m_courses($db->conn);
+            }
             //Get data
             $result = $choices->getChoices(); 
             $rows = array();        
             //Fetch data in assoc array
             while( $row = $result->fetch_assoc()) {
+                //For each Course get the corresponding professors
+                $professors = $courses->getProfessors($row["course_id"]);
+                //Add professors to the rest of the data
+                $i = 1;
+                while($professor = $professors->fetch_assoc()) {
+                    $row["professor_" . $i++] = $professor["title"] . " " . $professor["l_name"] . " " . $professor["f_name"];
+                }
                 foreach($row as $key => $value) {
-                    //Encode each row in utf8
+                    //Encode each value of the row in utf8
                     $row[$key] = utf8_encode($value);
                 }
             //Add rows to Array

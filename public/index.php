@@ -3,6 +3,7 @@ session_start();
 require_once "../controllers/c_users.php";
 require_once "../controllers/c_courses.php";
 require_once "../controllers/c_choices.php";
+require_once "../controllers/c_trades.php";
 
 $count = substr_count ($_SERVER["REQUEST_URI"], "/");
 

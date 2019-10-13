@@ -43,28 +43,7 @@
     <div class = "container aligner">
         <div class="filter-bar">
             <input class="form-control mr-sm-2 filter-name" type="search" placeholder="Search" aria-label="Search" id="search" oninput="getCourses()">
-            <div class = dropdown-container>
-                <div class="dropdown mr-sm-2">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Year
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
-                    </div>
-                </div>
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Package
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
-                    </div>
-                </div>
-            </div>            
+               
         </div>
         <span class = "row" id="root">  
         </span>
@@ -150,23 +129,33 @@
 
                         content.appendChild(h5)
 
-                        const p = document.createElement('p')
-                        p.setAttribute('class', 'card-text')                    
-                        p.textContent = item.professor
+                        const p1 = document.createElement('p')
+                        p1.setAttribute('class', 'card-text')                    
+                        p1.innerHTML ="<b>Professors:<br></b>" + item.professor_1
 
-                        content.appendChild(p)
+                        content.appendChild(p1)
 
                         const p2 = document.createElement('p')
-                        p2.setAttribute('class', 'card-text-small')                    
-                        p2.textContent = "Year: " + item.year
+                        p2.setAttribute('class', 'card-text')
+                        if (item.professor_2) {
+                            p2.innerHTML = item.professor_2                            
+                        } else {
+                            p2.innerHTML = "<br>"
+                        }              
 
                         content.appendChild(p2)
 
                         const p3 = document.createElement('p')
                         p3.setAttribute('class', 'card-text-small')                    
-                        p3.textContent = "Package: " + item.package
+                        p3.innerHTML = "<b>Year:</b> " + item.year
 
                         content.appendChild(p3)
+
+                        const p4 = document.createElement('p')
+                        p4.setAttribute('class', 'card-text-small')                    
+                        p4.innerHTML = "<b>Package:</b> " + item.package
+
+                        content.appendChild(p4)
 
                         const container = document.createElement('div')
                         container.setAttribute('class', 'container')
@@ -181,9 +170,8 @@
                         container.appendChild(btn1)
 
                         const btn2 = document.createElement('a')
-                        btn2.setAttribute('href', '#')
                         btn2.setAttribute('class', 'btn btn-card btn-outline-success')
-                        btn2.setAttribute('id' , item.id)
+                        btn2.setAttribute('id' , item.course_id)
                         btn2.setAttribute('onclick', 'openConfirmationSetChoice(event)')
                         btn2.textContent = '{ Alege }'
                         
