@@ -74,13 +74,13 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="infoModalStatus">Success</h5>
+                    <h5 class="modal-title" id="infoModalStatus"></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body" id="infoModalMsg">
-                    <p>Your option has been registered!</p>
+                    <p></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -192,7 +192,7 @@
             request.open('POST', 'choices/insert/' + this.choice, true)
             request.onload = function() {
                 var data = JSON.parse(this.response) 
-                console.log(data)   
+                
                 $('#infoModal').modal()
                 document.getElementById("infoModalStatus").textContent = data.status + '!'
                 document.getElementById("infoModalMsg").textContent = data.msg
