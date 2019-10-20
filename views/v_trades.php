@@ -45,7 +45,8 @@
             <input class="form-control mr-sm-2 filter-name" type="search" placeholder="Search" aria-label="Search" id="search" oninput="getTrades()">               
         </div>
         <div class="columns">
-            <div class="left-column">saas
+            <div class="left-column" id="trades-root">
+                
             </div>
 
             <div class="right-column">
@@ -82,15 +83,15 @@
                     <p></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="location.reload()"    >Close</button>
                 </div>
             </div>
         </div>
     </div>
     <script>
         function postCourseTrade() {
-            var e = document.getElementById("inputCourse");
-            var courseForTrade = e.options[e.selectedIndex].value;
+            var e = document.getElementById("inputCourse")
+            var courseForTrade = e.options[e.selectedIndex].value
             
             var data = courseForTrade
 
@@ -114,12 +115,12 @@
             request.send()
         }
         function getTradableOptions() {
-            var e = document.getElementById("inputCourse");
+            var e = document.getElementById("inputCourse")
 
-            var courseId = e.options[e.selectedIndex].value;
+            var courseId = e.options[e.selectedIndex].value
             var request = new XMLHttpRequest()
 
-            request.open('GET', 'trades/getTradableCourses/' + courseId, true);
+            request.open('GET', 'trades/getTradableCourses/' + courseId, true)
 
             request.onload = function() {
                 var data = JSON.parse(this.response)
@@ -154,12 +155,46 @@
             request.send()
         }
         function getTrades() {
-            
+            var request = new XMLHttpRequest() 
+
+            request.open('GET', 'trades/get', true)
+
+            request.onload = function() {
+                var data = JSON.parse(this.response)
+                
+                const root = document.getElementById('trades-root')
+                if(request.status >= 200 && request.status < 400) {
+                    data.forEach(item => {
+                        const d = document.createElement("div")
+                        d.setAttribute("class", "trades-card")
+                        d.setAttribute("trade_id", item.trade_id)
+                        
+                        root.appendChild(d)
+
+                        const p = document.createElement("p")
+                        stud_name = item.username.split('.')
+                        p.innerHTML =   '<b>' + capitalize(stud_name[0]) + ' ' + capitalize(stud_name[1]) + '</b>' + ' ofera ' + 
+                                        '<b>' + item.name + '</b>' + ' in schimbul unuia dintre urmatoarele cursuri: <br>'
+
+                        d.appendChild(p)
+
+                        const btn = document.createElement('a')
+                        btn.setAttribute('class', 'btn btn-card btn-outline-success')
+                        btn.setAttribute('onclick', 'openConfirmationSetChoice(event)')
+                        btn.textContent = '{ Alege }'
+                        
+                        d.appendChild(btn)
+                    })
+                } else {
+                    console.log('error')
+                }
+            }
+            request.send()
         }
         function getAssignedCourses() {
             var request = new XMLHttpRequest()
 
-            request.open('GET', 'choices/get', true);
+            request.open('GET', 'choices/get', true)
 
             request.onload = function() {
                     var data = JSON.parse(this.response)
@@ -179,6 +214,11 @@
                     }
                 }
             request.send()
+        }
+        const capitalize = (s) => {
+            if (typeof s !== 'string') 
+                return ''
+            return s.charAt(0).toUpperCase() + s.slice(1)
         }
     </script>
 

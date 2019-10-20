@@ -5,9 +5,17 @@ class m_trades {
         $this->conn = $conn;
     }
     function get() {
-        $stmt = $this->conn->prepare("SELECT * FROM `trades`");
+        $stmt = $this->conn->prepare("SELECT * FROM `trades`    JOIN `students` ON `students`.`student_id`  = `trades`.`donor_student_id` 
+                                                                JOIN `courses`  ON `courses`.`course_id`    = `trades`.`donor_course_id` 
+                                                                ORDER BY `trade_id` DESC");
         $stmt->execute();
         return $stmt->get_result();
+    }
+    function getAcceptedCourses($trade_id) {
+        $stmt = $this->conn->prepare("SELECT * FROM `trade_options` WHERE `trade_id` = ?");
+            $stmt->bind_param("i", $trade_id);
+            $stmt->execute();
+            return $stmt->get_result();
     }
     function insertTrade($course) {
         $stmt = $this->conn->prepare("SELECT    COUNT(*) 

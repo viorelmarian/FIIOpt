@@ -5,7 +5,11 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
     transition: all 0.3s ease-in-out;
-    height: 100vh;
+    height: 100vh;    
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 .card-img-top {
     height: 15rem;
@@ -100,6 +104,15 @@ body {
     #root {        
         width: 350px !important;
     }
+    .columns {
+        flex-direction: column-reverse !important;
+    }
+    .left-column, .right-column{
+        width: 100% !important;
+    }
+    .left-column {
+        margin-top: 20px;
+    }
 }
 .columns {
     margin-top: 20px;
@@ -123,7 +136,7 @@ body {
     background-color: rgba(255,255,255, .9);
     display: flex;
     justify-content: center;
-    color:white
+    color:white;
 }
 #inputChk {
     display: flex;
@@ -131,4 +144,11 @@ body {
 }
 .form-row {
     z-index: 1000;
+}
+.trades-card {
+    position: relative;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 5px;
+    background-color: #ffffff;
 }
