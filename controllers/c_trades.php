@@ -27,10 +27,13 @@ class trades {
                 $trades = new m_trades($db->conn);
             }
             //Get data
-            $result = $trades->get();    
-            $rows = array();        
+            $result = $trades->getTrades();
+
+            $rows = array();
             //Fetch data in assoc array
             while($row = $result->fetch_assoc()) {
+                $tradeOption = $trades->getTradeOptions($row["trade_id"]);
+                var_dump($row);
                 foreach($row as $key => $value) {
                     //Encode each value of the row in utf8
                     $row[$key] = utf8_encode($value);

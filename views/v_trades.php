@@ -10,7 +10,7 @@
     <link rel="shortcut icon" href="../assets/pictures/favicon.ico" type="image/x-icon">
     <title>{ FII_Opt } - Home</title>
 </head>
-<body onload="getTrades(), getAssignedCourses(), getTradableOptions">
+<body onload="getTrades(), getAssignedCourses(), getTradableOptions()">
 <div class = "screen_page"></div>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class = "container">
@@ -160,8 +160,8 @@
             request.open('GET', 'trades/get', true)
 
             request.onload = function() {
+                console.log(this.response)
                 var data = JSON.parse(this.response)
-                
                 const root = document.getElementById('trades-root')
                 if(request.status >= 200 && request.status < 400) {
                     data.forEach(item => {
