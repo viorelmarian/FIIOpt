@@ -13,7 +13,8 @@ class m_trades {
     }
     function getTradeOptions($trade_id) {
         $stmt = $this->conn->prepare("SELECT *  FROM    `trade_options`
-                                                JOIN    `trades` ON `trade_options`.`trade_id` = `trades`.`trade_id` 
+                                                JOIN    `trades`    ON `trade_options`.`trade_id` = `trades`.`trade_id` 
+                                                JOIN    `courses`   ON `trade_options`.`receiver_course_id` = `courses`.`course_id`
                                                 WHERE   `trade_options`.`trade_id` = ?");
         $stmt->bind_param("i", $trade_id);
         $stmt->execute();
@@ -90,6 +91,14 @@ class m_trades {
                                                                                 WHERE   `course_id` = ?) 
                                                 AND     `course_id` <> ?");        
         $stmt->bind_param("iii", $courseId, $courseId, $courseId);
+        $stmt->execute();
+        return $stmt->get_result(); 
+    }
+    function getUserForTrade($tradeId) {
+        $stmt = $this->conn->prepare("  SELECT  `username`   FROM   `students`
+                                        JOIN    `trades`     ON     `donor_student_id` = `student_id`                                        
+                                        WHERE   `trade_id` = ?");     
+        $stmt->bind_param("i", $tradeId);
         $stmt->execute();
         return $stmt->get_result(); 
     }

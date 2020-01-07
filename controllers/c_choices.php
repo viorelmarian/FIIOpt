@@ -73,18 +73,21 @@ class choices {
             }
             //Validations
             $result = $choices->validateChoice($courseId);
+            
             if (array_values($result->fetch_assoc())[0] == 0) {
+                //Insert choosen option
                 $choices->insert($courseId);
+                //Generate response
                 $response = array(  "status"=>"Success",
                                     "msg" => "Your choice has been successfully registered!"
                                 );
             } else {
+                //Generate response
                 $response = array(  "status"=>"Error",
                                     "msg" => "A course from this package was already choosen!"
                                 );
             }
             echo json_encode($response);
-            //Insert choosen option
         } else {
             //Redirect accordingly
             require_once "../views/v_login.php";

@@ -24,15 +24,20 @@ class m_choices {
     function validateChoice($courseId) {
         $stmt = $this->conn->prepare("SELECT COUNT(*)   FROM    `choices` 
                                                         JOIN    `courses`           ON `choices`.`course_id` = `courses`.`course_id` 
-                                                        WHERE   `courses`.`package`   IN (
-                                                                                        SELECT  `package` 
-                                                                                        FROM    `courses` 
-                                                                                        WHERE   `course_id` = ?)
-                                                        AND     `courses`.`year`      IN (
-                                                                                        SELECT  `year` 
-                                                                                        FROM    `courses` 
-                                                                                        WHERE   `course_id` = ?)");
-        $stmt->bind_param("ii", $courseId, $courseId);
+                                                        WHERE   `courses`.`package`     IN (
+                                                                                            SELECT  `package` 
+                                                                                            FROM    `courses` 
+                                                                                            WHERE   `course_id` = ?)
+                                                        AND     `courses`.`year`        IN (
+                                                                                            SELECT  `year` 
+                                                                                            FROM    `courses` 
+                                                                                            WHERE   `course_id` = ?)
+                                                        AND     `choices`.`student_id`  IN (
+                                                                                            SELECT  `student_id`
+                                                                                            FROM    `students`
+                                                                                            WHERE   `username` = ?)");
+        $user = $_SESSION["login_usr"];
+        $stmt->bind_param("iis", $courseId, $courseId, $user);
         $stmt->execute();
         return $stmt->get_result();
     }

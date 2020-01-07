@@ -1,6 +1,7 @@
 <?php
 require_once "../shared/db_conn.php";
 require_once "../models/m_trades.php";
+require_once "../models/m_offers.php";
 
 class trades {    
     function display() {
@@ -32,8 +33,11 @@ class trades {
             $rows = array();
             //Fetch data in assoc array
             while($row = $result->fetch_assoc()) {
-                $tradeOption = $trades->getTradeOptions($row["trade_id"]);
-                var_dump($row);
+                $tradeOptions = $trades->getTradeOptions($row["trade_id"]);
+                $i = 1;
+                while($tradeOption = $tradeOptions->fetch_assoc()) {
+                    $row["option_" . $i++] = $tradeOption["name"];
+                }
                 foreach($row as $key => $value) {
                     //Encode each value of the row in utf8
                     $row[$key] = utf8_encode($value);
@@ -147,6 +151,109 @@ class trades {
                 $response = array(  "status"=>"Error",
                                     "msg" => "You already have a request for this course!"
                                 );
+            }
+            echo json_encode($response);
+        } else {
+            //Redirect accordingly
+            require_once "../views/v_login.php";
+        }
+    }
+
+    function determineTradeOffer($tradeId) {
+         //If logged in
+         if (isset($_SESSION["logged"])) {
+            //If db connection does not exist
+            if(!isset($db)) {
+                //Create db connection
+                $db = new database_conn;
+                $db->connect();
+            }
+            //If model instance does not exist
+            if (!isset($offers)) {
+                //Create model instance
+                $offers = new m_offers($db->conn);                
+            }
+            //Get Data
+            $result = $offers->determineTradeOffer($tradeId);
+            $rows = array();        
+            //Fetch data in assoc array
+            while($row = $result->fetch_assoc()) {
+                foreach($row as $key => $value) {
+                    //Encode each value of the row in utf8
+                    $row[$key] = utf8_encode($value);
+                }
+            //Add rows in Array
+            $rows[] = $row;
+            }
+            //Encode in JSON Format and return
+            $msg = "Are you sure you want to trade '" . $rows[0]["name"] . "' for this course?";
+            $response = array(  "status"=>"Success",
+                                "msg" => $msg
+                            );  
+            echo json_encode($response);
+        } else {
+            //Redirect accordingly
+            require_once "../views/v_login.php";
+        }
+    }
+
+    function insertTradeOffer($tradeId) {
+        //If logged in
+        if (isset($_SESSION["logged"])) {
+            //If db connection does not exist
+            if(!isset($db)) {
+                //Create db connection
+                $db = new database_conn;
+                $db->connect();
+            }
+            //If model instance does not exist
+            if (!isset($offers)) {
+                //Create model instance
+                $offers = new m_offers($db->conn);                
+            }
+            if (!isset($trades)) {
+                //Create model instance
+                $trades = new m_trades($db->conn);                
+            }
+            //Determine Course to be offered
+            $result = $offers->determineTradeOffer($tradeId);
+            $courseId = $result->fetch_assoc()["course_id"];
+
+            /************Validations************/
+
+            //Check user own offer
+            $result = $trades->getUserForTrade($tradeId);
+            $donor_user = $result->fetch_assoc()["username"];
+            if ($donor_user != $_SESSION["login_usr"]) {
+                //Check user offer exists
+                $result = $offers->getOffersForTrade($tradeId);
+                if(array_values($result->fetch_assoc())[0] == 0) {
+                    //Check valid offer
+                    $result = $offers->checkValidOffer($tradeId, $courseId);
+                    if(array_values($result->fetch_assoc())[0] != 0) {
+                        //Insert Offer
+                        $offers->insertOffer($tradeId, $courseId);
+                        //Generate response
+                        $response = array(  "status"=>"Success",
+                                            "msg" => "Your offer has been successfully registered!"
+                                        );
+                    } else {
+                        $response = array(  
+                            "status"=>"Error",
+                            "msg" => "You do not have a valid course to trade!"
+                        );
+                    }
+                } else {
+                    $response = array(  
+                        "status"=>"Error",
+                        "msg" => "You have already made an offer for this course!"
+                    );
+                }
+            } else {
+                $response = array(  
+                                "status"=>"Error",
+                                "msg" => "You can not make an offer for your own course!"
+                            );
             }
             echo json_encode($response);
         } else {
