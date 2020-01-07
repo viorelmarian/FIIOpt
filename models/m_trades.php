@@ -4,10 +4,13 @@ class m_trades {
     function m_trades($conn) {
         $this->conn = $conn;
     }
-    function getTrades() {
+    function getTrades($src) {
         $stmt = $this->conn->prepare("SELECT * FROM `trades`    JOIN `students`         ON `students`.`student_id`      = `trades`.`donor_student_id` 
                                                                 JOIN `courses`          ON `courses`.`course_id`        = `trades`.`donor_course_id`
-                                                                ORDER BY `trade_id` DESC");
+                                                                WHERE `name` LIKE ?
+                                                                ORDER BY `trade_id` DESC ");
+        $src = '%' . $src . '%';
+        $stmt->bind_param("s", $src);
         $stmt->execute();
         return $stmt->get_result();
     }

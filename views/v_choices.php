@@ -32,6 +32,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/trades/display">{ Trade_Opt }</a>
                     </li>  
+                    <li class="nav-item">
+                        <a class="nav-link" href="/notifications/display">{ Notifications }</a>
+                    </li>  
                 </ul>
                 <form class="form-inline my-2 my-lg-0" action="/users/logout" method="post" >
                     <button class="btn btn-primary my-2 my-sm-0" type="submit">{ Logout }</button>

@@ -14,7 +14,7 @@ class trades {
             require_once "../views/v_login.php";
         }
     }
-    function get() {
+    function get($src) {
         if (isset($_SESSION["logged"])) {
             //If db connection does not exist
             if(!isset($db)) {
@@ -28,7 +28,7 @@ class trades {
                 $trades = new m_trades($db->conn);
             }
             //Get data
-            $result = $trades->getTrades();
+            $result = $trades->getTrades($src);
 
             $rows = array();
             //Fetch data in assoc array
@@ -186,7 +186,7 @@ class trades {
             $rows[] = $row;
             }
             //Encode in JSON Format and return
-            $msg = "Are you sure you want to trade '" . $rows[0]["name"] . "' for this course?";
+            $msg = "Are you sure you want to trade <b>'" . $rows[0]["name"] . "'</b> for this course?";
             $response = array(  "status"=>"Success",
                                 "msg" => $msg
                             );  

@@ -50,26 +50,7 @@
         <div class="columns">
             <div class="left-column" id="trades-root">
                 
-            </div>
-
-            <div class="right-column">
-                <form>
-                    <div class="form-row">
-                        <div class="form-group col-md-12">
-                            <label for="inputCourse"><h4>Change</h4></label>
-                            <select id="inputCourse" class="form-control" onchange="getTradableOptions()">
-                                <option selected>Choose a course</option>
-                            </select><br>       
-                            <h4>For</h4>
-                        </div>          
-                    </div>
-                    <div class="form-group">    
-                        <div class="form-check" id="inputChk">
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-success" style="position:relative" onclick="postCourseTrade()">Submit</button>
-                </form>
-            </div>        
+            </div>                
         </div>
     </div>
     <!-- Modal -->
@@ -208,13 +189,12 @@
         function getTrades() {
             var request = new XMLHttpRequest() 
 
-            request.open('GET', 'trades/get/' + search.value, true)
+            request.open('GET', 'trades/get', true)
 
             request.onload = function() {
-                
+                console.log(this.response)
                 var data = JSON.parse(this.response)
                 const root = document.getElementById('trades-root')
-                root.innerHTML = "";
                 if(request.status >= 200 && request.status < 400) {
                     data.forEach(item => {
                         const d = document.createElement("div")
