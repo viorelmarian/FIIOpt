@@ -1,8 +1,8 @@
 <?php
 require_once "../shared/db_conn.php";
-require_once "../models/m_choices.php";
+require_once "../models/m_assignations.php";
 
-class choices {
+class assignations {
     function display() {
         //If logged in
         if (isset($_SESSION["logged"])) {
@@ -13,7 +13,7 @@ class choices {
             require_once "../views/v_login.php";
         }
     }
-    function get() {    
+    function get($option) {    
         //If logged in    
         if (isset($_SESSION["logged"])) {  
             //If db connection does not exist
@@ -23,16 +23,20 @@ class choices {
                 $db->connect();
             }
             //If model instance does not exist
-            if (!isset($choices)) {
+            if (!isset($assignations)) {
                 //Create model instance
-                $choices = new m_choices($db->conn);
+                $assignations = new m_assignations($db->conn);
             }
             if (!isset($courses)) {
                 //Create model instance
                 $courses = new m_courses($db->conn);
             }
             //Get data
-            $result = $choices->getChoices();   
+            if($option == 'display') {
+                $result = $assignations->getAssignations(); 
+            } elseif ($option == 'trade') {
+                $result = $assignations->getTradeCourses(); 
+            }            
             $rows = array();        
             //Fetch data in assoc array
             while( $row = $result->fetch_assoc()) {
@@ -67,16 +71,16 @@ class choices {
                 $db->connect();
             }
             //If model instance does not exist
-            if (!isset($choices)) {
+            if (!isset($assignations)) {
                 //Create model instance
-                $choices = new m_choices($db->conn);
+                $assignations = new m_assignations($db->conn);
             }
             //Validations
-            $result = $choices->validateChoice($courseId);
+            $result = $assignations->validateChoice($courseId);
             
             if (array_values($result->fetch_assoc())[0] == 0) {
                 //Insert choosen option
-                $choices->insert($courseId);
+                $assignations->insert($courseId);
                 //Generate response
                 $response = array(  "status"=>"Success",
                                     "msg" => "Your choice has been successfully registered!"

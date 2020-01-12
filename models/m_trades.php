@@ -5,9 +5,10 @@ class m_trades {
         $this->conn = $conn;
     }
     function getTrades($src) {
-        $stmt = $this->conn->prepare("SELECT * FROM `trades`    JOIN `students`         ON `students`.`student_id`      = `trades`.`donor_student_id` 
-                                                                JOIN `courses`          ON `courses`.`course_id`        = `trades`.`donor_course_id`
-                                                                WHERE `name` LIKE ?
+        $stmt = $this->conn->prepare("SELECT * FROM `trades`    JOIN    `students`         ON `students`.`student_id`      = `trades`.`donor_student_id` 
+                                                                JOIN    `courses`          ON `courses`.`course_id`        = `trades`.`donor_course_id`
+                                                                WHERE   `name` LIKE ?
+                                                                AND     `status` = 'Pending'
                                                                 ORDER BY `trade_id` DESC ");
         $src = '%' . $src . '%';
         $stmt->bind_param("s", $src);
@@ -17,7 +18,7 @@ class m_trades {
     function getTradeOptions($trade_id) {
         $stmt = $this->conn->prepare("SELECT *  FROM    `trade_options`
                                                 JOIN    `trades`    ON `trade_options`.`trade_id` = `trades`.`trade_id` 
-                                                JOIN    `courses`   ON `trade_options`.`receiver_course_id` = `courses`.`course_id`
+                                                JOIN    `courses`   ON `trade_options`.`option_course_id` = `courses`.`course_id`
                                                 WHERE   `trade_options`.`trade_id` = ?");
         $stmt->bind_param("i", $trade_id);
         $stmt->execute();
@@ -42,17 +43,19 @@ class m_trades {
         $stmt->bind_param("si", $_SESSION["login_usr"], $course);
         $stmt->execute();
         if (array_values($stmt->get_result()->fetch_assoc())[0] == 0) {
-            $stmt = $this->conn->prepare("INSERT    INTO    `trades`(`donor_student_id`, `donor_course_id`) 
+            $stmt = $this->conn->prepare("INSERT    INTO    `trades`(`donor_student_id`, `donor_course_id`, `status`) 
                                                     VALUES  (
                                                                 (
                                                                     SELECT  `student_id` 
                                                                     FROM    `students` 
                                                                     WHERE   `username` = ?
                                                                 ), 
+                                                                ?,
                                                                 ?
                                                             )"
                                         );
-            $stmt->bind_param("si", $_SESSION["login_usr"], $course);
+            $status = "Pending";
+            $stmt->bind_param("sis", $_SESSION["login_usr"], $course, $status);
             $stmt->execute();
             return True;
         } else {
@@ -60,7 +63,7 @@ class m_trades {
         }        
     }
     function insertOption($donorCourseId, $receiverCourseId) {
-        $stmt = $this->conn->prepare("INSERT    INTO    `trade_options`(`trade_id`, `receiver_course_id`, `receiver_student_id`, `trade_status`) 
+        $stmt = $this->conn->prepare("INSERT    INTO    `trade_options`(`trade_id`, `option_course_id`) 
                                                 VALUES  (
                                                             (   SELECT  `trade_id`  FROM    `trades` 
                                                                                     WHERE   `donor_student_id` 
@@ -71,13 +74,10 @@ class m_trades {
                                                                                     )
                                                                                     AND `donor_course_id` = ?
                                                             ),
-                                                            ?,
-                                                            NULL,
                                                             ?
                                                         )"
                                     );
-        $status = "Pending";
-        $stmt->bind_param("siis", $_SESSION["login_usr"], $donorCourseId, $receiverCourseId, $status);
+        $stmt->bind_param("sii", $_SESSION["login_usr"], $donorCourseId, $receiverCourseId);
         $stmt->execute();
         return $stmt->get_result(); 
     }

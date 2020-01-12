@@ -152,7 +152,7 @@
                 }
             }
             var request = new XMLHttpRequest()
-
+            console.log(data)
             request.open('POST', 'trades/insert/' + data, true)
             request.onload = function() {
                 var data = JSON.parse(this.response)
@@ -246,7 +246,7 @@
                             d.appendChild(p1)
                         }
                         const btn = document.createElement('a')
-                        btn.setAttribute('class', 'btn btn-card btn-outline-success')
+                        btn.setAttribute('class', 'btn btn-notif btn-success')
                         btn.setAttribute('id', item.trade_id)
                         btn.setAttribute('onclick', 'openConfirmationOfferCourse(event)')
                         btn.textContent = '{ Alege }'
@@ -262,7 +262,7 @@
         function getAssignedCourses() {
             var request = new XMLHttpRequest()
 
-            request.open('GET', 'choices/get', true)
+            request.open('GET', 'assignations/get/trade', true)
 
             request.onload = function() {
                     var data = JSON.parse(this.response)

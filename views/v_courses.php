@@ -167,13 +167,13 @@
 
                         const btn1 = document.createElement('a')
                         btn1.setAttribute('href', item.link)
-                        btn1.setAttribute('class', 'btn btn-primary btn-card')
+                        btn1.setAttribute('class', 'btn btn-info btn-card')
                         btn1.textContent = '{ Fisa Disciplinei }'
 
                         container.appendChild(btn1)
 
                         const btn2 = document.createElement('a')
-                        btn2.setAttribute('class', 'btn btn-card btn-outline-success')
+                        btn2.setAttribute('class', 'btn btn-card btn-success')
                         btn2.setAttribute('id' , item.course_id)
                         btn2.setAttribute('onclick', 'openConfirmationSetChoice(event)')
                         btn2.textContent = '{ Alege }'

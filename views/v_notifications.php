@@ -10,7 +10,7 @@
     <link rel="shortcut icon" href="../assets/pictures/favicon.ico" type="image/x-icon">
     <title>{ FII_Opt } - Home</title>
 </head>
-<body onload="getTrades(), getAssignedCourses(), getTradableOptions()">
+<body onload="getTradeOffers()">
 <div class = "screen_page"></div>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class = "container">
@@ -45,33 +45,14 @@
     </nav>
     <div class = "container aligner">
         <div class="filter-bar">
-            <input class="form-control mr-sm-2 filter-name" type="search" placeholder="Search" aria-label="Search" id="search" oninput="getTrades()">               
+            <input class="form-control mr-sm-2 filter-name" type="search" placeholder="Search" aria-label="Search" id="search" oninput="getTradeOffers()">               
         </div>
-        <div class="columns">
-            <div class="left-column" id="trades-root">
+        <div class="columns" style="justify-content:center;">
+            <div class="left-column" id="trade_offers-root" style="width: 80%">
                 
             </div>                
         </div>
-    </div>
-    <!-- Modal -->
-    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmModalLabel">Confirm Choice</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="confirmModalMsg">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="saveCourseOffer()">Confirm</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    </div>   
     <!-- Modal -->
     <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -86,152 +67,52 @@
                     <p></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="location.reload()"    >Close</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="location.reload()">Close</button>
                 </div>
             </div>
         </div>
     </div>
     <script>
-        function saveCourseOffer(){
-            var request = new XMLHttpRequest()
-
-            request.open('POST', 'trades/insertTradeOffer/' + this.choice, true)
-            request.onload = function() {
-                var data = JSON.parse(this.response)
-                
-                $('#infoModal').modal()
-                document.getElementById("infoModalStatus").textContent = data.status + '!'
-                document.getElementById("infoModalMsg").textContent = data.msg
-            }
-
-            request.send()
-        }
-        function openConfirmationOfferCourse(e) {
-            this.choice = e.target.id
-            var request = new XMLHttpRequest()
-
-            request.open('POST', 'trades/determineTradeOffer/' + this.choice, true)
-            request.onload = function() {
-                var data = JSON.parse(this.response)
-                
-                $('#confirmModal').modal()
-                document.getElementById("confirmModalMsg").innerHTML = data.msg
-            }
-
-            request.send()         
-        }
-        function postCourseTrade() {
-            var e = document.getElementById("inputCourse")
-            var courseForTrade = e.options[e.selectedIndex].value
-            
-            var data = courseForTrade
-
-            var courseOptions = document.getElementsByClassName('form-check-input')
-            for(courseId in courseOptions) {
-                if(courseOptions[courseId].checked) {
-                    data = data + '.' + courseOptions[courseId].value
-                }
-            }
-            var request = new XMLHttpRequest()
-
-            request.open('POST', 'trades/insert/' + data, true)
-            request.onload = function() {
-                var data = JSON.parse(this.response)
-                
-                $('#infoModal').modal()
-                document.getElementById("infoModalStatus").textContent = data.status + '!'
-                document.getElementById("infoModalMsg").textContent = data.msg
-            }
-
-            request.send()
-        }
-        function getTradableOptions() {
-            var e = document.getElementById("inputCourse")
-
-            var courseId = e.options[e.selectedIndex].value
-            var request = new XMLHttpRequest()
-
-            request.open('GET', 'trades/getTradableCourses/' + courseId, true)
-
-            request.onload = function() {
-                var data = JSON.parse(this.response)
-                
-                const c = document.getElementById('inputChk')
-                c.innerHTML = ""
-
-                if (request.status >= 200 && request.status < 400) {
-                        data.forEach(item => {
-                            const r = document.createElement("div")
-                            r.setAttribute("class", "row")
-
-                            c.appendChild(r)
-
-                            const l = document.createElement("label")
-                            l.setAttribute("for", item.course_id)
-                            l.innerHTML=item.name
-
-                            r.appendChild(l)
-
-                            const i = document.createElement("input")
-                            i.setAttribute("type", "checkbox")
-                            i.setAttribute("class", "form-check-input")
-                            i.setAttribute("value", item.course_id)
-
-                            r.appendChild(i)                            
-                        })
-                    } else {
-                        console.log('error')
-                    }
-            }
-            request.send()
-        }
-        
-        function getTrades() {
+        function getTradeOffers() {
             var request = new XMLHttpRequest() 
 
-            request.open('GET', 'trades/get', true)
+            request.open('GET', 'trades/getTradeOffers', true)
 
-            request.onload = function() {
-                console.log(this.response)
+            request.onload = function() { 
+
                 var data = JSON.parse(this.response)
-                const root = document.getElementById('trades-root')
+                
+                const root = document.getElementById('trade_offers-root')
                 if(request.status >= 200 && request.status < 400) {
                     data.forEach(item => {
                         const d = document.createElement("div")
                         d.setAttribute("class", "trades-card")
-                        d.setAttribute("trade_id", item.trade_id)
                         
                         root.appendChild(d)
 
                         const p = document.createElement("p")
-                        stud_name = item.username.split('.')
+                        stud_name = item.offer_student_name.split('.')
                         p.innerHTML =   '<b>' + capitalize(stud_name[0]) + ' ' + capitalize(stud_name[1]) + '</b>' + ' ofera ' + 
-                                        '<b>' + item.name + '</b>' + ' in schimbul unuia dintre urmatoarele cursuri: <br>'
+                                        '<b>"' + item.offer_course_name + '"</b>' + ' in schimbul cursului ' + 
+                                        '<b>"' + item.donor_course_name + '"</b>.' + '<br><br>' + 'Accepti?'
 
                         d.appendChild(p)
                         
-                        if (item.option_1) {
-                            const p1 = document.createElement("p")
-                            p1.innerHTML = '- ' + item.option_1
-                            d.appendChild(p1)
-                        }
-                        if (item.option_2) {
-                            const p1 = document.createElement("p")
-                            p1.innerHTML = '- ' + item.option_2
-                            d.appendChild(p1)
-                        }
-                        if (item.option_3) {
-                            const p1 = document.createElement("p")
-                            p1.innerHTML = '- ' + item.option_3
-                            d.appendChild(p1)
-                        }
-                        const btn = document.createElement('a')
-                        btn.setAttribute('class', 'btn btn-card btn-outline-success')
-                        btn.setAttribute('id', item.trade_id)
-                        btn.setAttribute('onclick', 'openConfirmationOfferCourse(event)')
-                        btn.textContent = '{ Alege }'
+                        const btn_accept = document.createElement('a')
+                        btn_accept.setAttribute('class', 'btn btn-notif btn-success')
+                        btn_accept.setAttribute('id', item.offer_id)
+                        btn_accept.setAttribute('onclick', 'acceptTrade(event)')
+                        btn_accept.textContent = '{ Accept }'
+
+                        d.appendChild(btn_accept)
+
+                        const btn_decline = document.createElement('a')
+                        btn_decline.setAttribute('class', 'btn btn-notif btn-danger')
+                        btn_decline.setAttribute('id', item.offer_id)
+                        btn_decline.setAttribute('onclick', 'declineTrade(event)')
+                        btn_decline.textContent = '{ Decline }'
                         
-                        d.appendChild(btn)
+                        d.appendChild(btn_decline)
                     })
                 } else {
                     console.log('error')
@@ -239,30 +120,43 @@
             }
             request.send()
         }
-        function getAssignedCourses() {
+
+        function acceptTrade(e) {
+            this.choice = e.target.id
+            console.log(this.choice)
             var request = new XMLHttpRequest()
 
-            request.open('GET', 'choices/get', true)
-
+            request.open('POST', 'trades/acceptTrade/' + this.choice, true)
             request.onload = function() {
-                    var data = JSON.parse(this.response)
+                var data = JSON.parse(this.response)
+                console.log(data)
+                
+                $('#infoModal').modal()
+                document.getElementById("infoModalStatus").textContent = data.status + '!'
+                document.getElementById("infoModalMsg").innerHTML = data.msg
+            }
 
-                    const s = document.getElementById('inputCourse')
-
-                    if (request.status >= 200 && request.status < 400) {
-                        data.forEach(item => {
-                            const o = document.createElement("option")
-                            o.setAttribute("value", item.course_id)
-                            o.innerHTML = item.name
-
-                            s.appendChild(o)
-                        })
-                    } else {
-                        console.log('error')
-                    }
-                }
-            request.send()
+            request.send()         
         }
+        
+        function declineTrade(e) {
+            this.choice = e.target.id
+            console.log(this.choice)
+            var request = new XMLHttpRequest()
+
+            request.open('POST', 'trades/declineTrade/' + this.choice, true)
+            request.onload = function() {
+                var data = JSON.parse(this.response)
+                console.log(data)
+                
+                $('#infoModal').modal()
+                document.getElementById("infoModalStatus").textContent = data.status + '!'
+                document.getElementById("infoModalMsg").innerHTML = data.msg
+            }
+
+            request.send()   
+        }
+
         const capitalize = (s) => {
             if (typeof s !== 'string') 
                 return ''

@@ -5,6 +5,7 @@ require_once "../controllers/c_courses.php";
 require_once "../controllers/c_choices.php";
 require_once "../controllers/c_trades.php";
 require_once "../controllers/c_notifications.php";
+require_once "../controllers/c_assignations.php";
 
 $count = substr_count ($_SERVER["REQUEST_URI"], "/");
 

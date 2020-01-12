@@ -139,7 +139,7 @@ class trades {
             if ($trades->insertTrade($courses[0])) {
                 //If trade is not already posted insert options
                 foreach ($courses as $course) {
-                    //Do not insert the caourse that you trade as a trade option
+                    //Do not insert the course that you trade as a trade option
                     if ($course != $courses[0]) {
                         $trades->insertOption($courses[0], $course);
                     }
@@ -231,12 +231,20 @@ class trades {
                     //Check valid offer
                     $result = $offers->checkValidOffer($tradeId, $courseId);
                     if(array_values($result->fetch_assoc())[0] != 0) {
-                        //Insert Offer
-                        $offers->insertOffer($tradeId, $courseId);
-                        //Generate response
-                        $response = array(  "status"=>"Success",
-                                            "msg" => "Your offer has been successfully registered!"
-                                        );
+
+                        $result = $offers->getTradeStatus($tradeId);
+                        if($result->fetch_assoc()["status"] != "Completed") {
+                            //Insert Offer
+                            $offers->insertOffer($tradeId, $courseId);
+                            //Generate response
+                            $response = array(  "status"=>"Success",
+                                                "msg" => "Your offer has been successfully registered!"
+                            );
+                        } else {
+                            $response = array(  "status"=>"Error",
+                                                "msg" => "Trade is no longer available!"
+                            );
+                        }                        
                     } else {
                         $response = array(  
                             "status"=>"Error",
@@ -253,9 +261,81 @@ class trades {
                 $response = array(  
                                 "status"=>"Error",
                                 "msg" => "You can not make an offer for your own course!"
-                            );
+                );
             }
             echo json_encode($response);
+        } else {
+            //Redirect accordingly
+            require_once "../views/v_login.php";
+        }
+    }
+
+    function getTradeOffers() {
+        //If logged in
+        if (isset($_SESSION["logged"])) {
+            //If db connection does not exist
+            if(!isset($db)) {
+                //Create db connection
+                $db = new database_conn;
+                $db->connect();
+            }
+            //If model instance does not exist
+            if (!isset($offers)) {
+                //Create model instance
+                $offers = new m_offers($db->conn);                
+            }
+            $tradeOffers = $offers->getOffers();
+            echo json_encode($tradeOffers);    
+        } else {
+            //Redirect accordingly
+            require_once "../views/v_login.php";
+        }
+    }
+
+    function acceptTrade($offerId) {
+        if (isset($_SESSION["logged"])) {
+            //If db connection does not exist
+            if(!isset($db)) {
+                //Create db connection
+                $db = new database_conn;
+                $db->connect();
+            }
+            //If model instance does not exist
+            if (!isset($offers)) {
+                //Create model instance
+                $offers = new m_offers($db->conn);                
+            }
+            $tradeOffers = $offers->acceptOffer($offerId);
+            $response = array(  
+                "status"=>"Success",
+                "msg" => "Trade completed successfully!"
+            );
+            echo json_encode($response);    
+        } else {
+            //Redirect accordingly
+            require_once "../views/v_login.php";
+        }
+    }
+
+    function declineTrade($offerId) {
+        if (isset($_SESSION["logged"])) {
+            //If db connection does not exist
+            if(!isset($db)) {
+                //Create db connection
+                $db = new database_conn;
+                $db->connect();
+            }
+            //If model instance does not exist
+            if (!isset($offers)) {
+                //Create model instance
+                $offers = new m_offers($db->conn);                
+            }
+            $tradeOffers = $offers->declineOffer($offerId);
+            $response = array(  
+                "status"=>"Success",
+                "msg" => "Trade declined!"
+            );
+            echo json_encode($response);    
         } else {
             //Redirect accordingly
             require_once "../views/v_login.php";

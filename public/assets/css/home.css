@@ -38,6 +38,8 @@ body {
 .btn-card {      
     width: 100% !important;
     margin-bottom: 5px;
+    color: white !important;
+    cursor: pointer;
 }
 .btn-choose {    
     background-color: #28a745 !important;
@@ -150,5 +152,10 @@ body {
     padding: 20px;
     margin: 10px;
     border-radius: 5px;
-    background-color: #ffffff;
+    background-color: #ffffff !important;
+}
+.btn-notif{
+    color: #ffffff !important;
+    margin: 5px;
+    cursor: pointer;
 }
