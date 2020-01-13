@@ -66,5 +66,8 @@ class users
         header("Location: ../courses/display");
         exit();
     }
+    function getLoggedUser() {
+        echo json_encode($_SESSION["login_usr"]);
+    }
 }
 ?>

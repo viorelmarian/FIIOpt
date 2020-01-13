@@ -10,7 +10,7 @@
     <link rel="shortcut icon" href="../assets/pictures/favicon.ico" type="image/x-icon">
     <title>{ FII_Opt } - Home</title>
 </head>
-<body onload="getChoices(), getAssignations()">
+<body onload="getChoices(), getAssignations(), displayUsername()">
     <div class = "screen_page"></div>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class = "container">
@@ -23,7 +23,7 @@
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
+                    <li class="nav-item">
                         <a class="nav-link" href="/courses/display">{ Choose_Opt }</a>
                     </li> 
                     <li class="nav-item">
@@ -36,7 +36,8 @@
                         <a class="nav-link" href="/notifications/display">{ Notifications }</a>
                     </li>  
                 </ul>
-                <form class="form-inline my-2 my-lg-0" action="/users/logout" method="post" >
+                <form class="form-inline my-2 my-lg-0" action="/users/logout" method="post">
+                    <div id="username" class="username" style="color:white; margin-right:10px"></div>
                     <button class="btn btn-primary my-2 my-sm-0" type="submit">{ Logout }</button>
                 </form>
             </div>
@@ -139,61 +140,87 @@
             request.send()
         }
        
-       function getAssignations() {
+        function getAssignations() {
             var request = new XMLHttpRequest()
 
             request.open('GET', 'assignations/get/display', true);
 
             request.onload = function() {
-                    var data = JSON.parse(this.response)
+                var data = JSON.parse(this.response)
 
-                    const row = document.getElementById('root-assignations')
-                    row.innerHTML = "";
+                const row = document.getElementById('root-assignations')
+                row.innerHTML = "";
 
-                    if (request.status >= 200 && request.status < 400) {
-                        data.forEach(item => {
+                if (request.status >= 200 && request.status < 400) {
+                    data.forEach(item => {
 
-                            const tr = document.createElement('tr')
-                            row.appendChild(tr)
+                        const tr = document.createElement('tr')
+                        row.appendChild(tr)
 
-                            const td1 = document.createElement('td')
-                            td1.innerText = item.name
+                        const td1 = document.createElement('td')
+                        td1.innerText = item.name
 
-                            tr.appendChild(td1)
+                        tr.appendChild(td1)
 
-                            const td2 = document.createElement('td')
-                            td2.innerText = item.professor_1
+                        const td2 = document.createElement('td')
+                        td2.innerText = item.professor_1
 
-                            tr.appendChild(td2)
+                        tr.appendChild(td2)
 
-                            const td3 = document.createElement('td')
-                            if (item.professor_2) {
-                                td3.innerText = item.professor_2                            
-                            }
+                        const td3 = document.createElement('td')
+                        if (item.professor_2) {
+                            td3.innerText = item.professor_2                            
+                        }
 
-                            tr.appendChild(td3)
+                        tr.appendChild(td3)
 
-                            const td4 = document.createElement('td')
-                            td4.innerText = item.year
+                        const td4 = document.createElement('td')
+                        td4.innerText = item.year
 
-                            tr.appendChild(td4)
+                        tr.appendChild(td4)
 
-                            const td5 = document.createElement('td')
-                            td5.innerText = item.package
+                        const td5 = document.createElement('td')
+                        td5.innerText = item.package
 
-                            tr.appendChild(td5)
+                        tr.appendChild(td5)
 
-                            const td6 = document.createElement('td')
-                            td6.innerText = item.status
+                        const td6 = document.createElement('td')
+                        td6.innerText = item.status
 
-                            tr.appendChild(td6)
-                        })
-                    } else {
-                        console.log('error')
-                    }
+                        tr.appendChild(td6)
+                    })
+                } else {
+                    console.log('error')
                 }
+            }
             request.send()
-       }        
+        }       
+        
+        const capitalize = (s) => {
+        if (typeof s !== 'string') 
+            return ''
+        return s.charAt(0).toUpperCase() + s.slice(1)
+        }
+
+        function displayUsername() {
+            var request = new XMLHttpRequest()
+
+            request.open('GET', 'users/getLoggedUser', true);
+
+            request.onload = function() {
+                if (request.status >= 200 && request.status < 400) {
+                    var data = JSON.parse(this.response)
+                    username = document.getElementById('username')
+                    console.log(data)
+                    stud_name = data.split('.')
+                    username.innerHTML =   '<b>' + capitalize(stud_name[0]) + ' ' + capitalize(stud_name[1]) + '</b>' 
+                } else {
+                    console.log('error')
+                }
+            }
+            request.send()
+        }
+            
     </script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

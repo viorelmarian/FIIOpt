@@ -10,7 +10,7 @@
     <link rel="shortcut icon" href="../assets/pictures/favicon.ico" type="image/x-icon">
     <title>{ FII_Opt } - Home</title>
 </head>
-<body onload="getTradeOffers()">
+<body onload="getTradeOffers(), displayUsername()">
 <div class = "screen_page"></div>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class = "container">
@@ -37,6 +37,7 @@
                 </li>
             </ul>
             <form class="form-inline my-2 my-lg-0" action="/users/logout" method="post" >
+                    <div id="username" class="username" style="color:white; margin-right:10px"></div>
                 <button class="btn btn-primary my-2 my-sm-0" type="submit">{ Logout }</button>
             </form>
         </div>
@@ -161,6 +162,24 @@
             if (typeof s !== 'string') 
                 return ''
             return s.charAt(0).toUpperCase() + s.slice(1)
+        }
+        function displayUsername() {
+            var request = new XMLHttpRequest()
+
+            request.open('GET', 'users/getLoggedUser', true);
+
+            request.onload = function() {
+                if (request.status >= 200 && request.status < 400) {
+                    var data = JSON.parse(this.response)
+                    username = document.getElementById('username')
+                    console.log(data)
+                    stud_name = data.split('.')
+                    username.innerHTML =   '<b>' + capitalize(stud_name[0]) + ' ' + capitalize(stud_name[1]) + '</b>' 
+                } else {
+                    console.log('error')
+                }
+            }
+            request.send()
         }
     </script>
     
