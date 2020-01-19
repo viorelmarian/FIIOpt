@@ -36,7 +36,7 @@
                     <a class="nav-link" href="/notifications/display">{ Notifications }</a>
                 </li>
             </ul>
-            <form class="form-inline my-2 my-lg-0" action="/users/logout" method="post" >
+            <form class="form-inline my-2 my-lg-0" action="/users/logout/usr" method="post" >
                 <div id="username" class="username" style="color:white; margin-right:10px"></div>
                 <button class="btn btn-primary my-2 my-sm-0" type="submit">{ Logout }</button>
             </form>
@@ -46,30 +46,52 @@
     </nav>
     <div class = "container aligner">
         <div class="filter-bar">
-            <input class="form-control mr-sm-2 filter-name" type="search" placeholder="Search" aria-label="Search" id="search" oninput="getTrades()">               
+            <input class="form-control mr-sm-2 filter-name" type="search" placeholder="Search" aria-label="Search" id="search" oninput="getTrades()">  
+            <button id="go-to-transfers" class="btn btn-primary my-2 my-sm-0" style="margin-right:10px;" onclick="hideAll(), showTransfers()">{ Transfer_Requests }</button>       
+            <button id="go-to-trades" class="btn btn-primary my-2 my-sm-0 hide" style="margin-right:10px;" onclick="hideAll(), showTrades()">{ Trades }</button>       
         </div>
         <div class="columns">
-            <div class="left-column" id="trades-root">
-                
+            <div class="left-column" >
+                <div id="trades-root"></div>
+                <div id="transfers-root"></div>
             </div>
 
             <div class="right-column">
-                <form>
-                    <div class="form-row">
-                        <div class="form-group col-md-12">
-                            <label for="inputCourse"><h4>Change</h4></label>
-                            <select id="inputCourse" class="form-control" onchange="getTradableOptions()">
-                                <option selected>Choose a course</option>
-                            </select><br>       
-                            <h4>For</h4>
-                        </div>          
-                    </div>
-                    <div class="form-group">    
-                        <div class="form-check" id="inputChk">
+                <div id="post_trade">
+                    <form>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="inputCourse"><h4>Change</h4></label>
+                                <select id="inputCourse" class="form-control" onchange="getTradableOptions()">
+                                    <option selected>Choose a course</option>
+                                </select><br>       
+                                <h4>For</h4>
+                            </div>          
                         </div>
-                    </div>
-                    <button type="button" class="btn btn-success" style="position:relative" onclick="postCourseTrade()">Submit</button>
-                </form>
+                        <div class="form-group" style="margin-left: 20px;">    
+                            <div class="form-check" id="inputChk">
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-success" style="position:relative" onclick="postCourseTrade()">{ Post_Trade }</button>
+                    </form>
+                </div>   
+                <div id="transfer" class="hide" style="width:100%">
+                    <form>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="inputFromCourse"><h4>Transfer from</h4></label>
+                                <select id="inputFromCourse" class="form-control" onchange="getTransferableOptions()">
+                                    <option selected>Choose a course</option>
+                                </select><br>       
+                                <label for="inputToCourse"><h4>To</h4></label>
+                                <select id="inputToCourse" class="form-control">
+                                    <option selected>Choose a course</option>
+                                </select><br>
+                            </div>          
+                        </div>
+                        <button type="button" class="btn btn-success" style="position:relative" onclick="requestTransfer()">{ Request_Transfer }</button>
+                    </form>
+                </div>             
             </div>        
         </div>
     </div>
@@ -106,7 +128,7 @@
                     <p></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="location.reload()"    >Close</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="location.reload()">Close</button>
                 </div>
             </div>
         </div>
@@ -167,7 +189,7 @@
         }
         function getTradableOptions() {
             var e = document.getElementById("inputCourse")
-
+            
             var courseId = e.options[e.selectedIndex].value
             var request = new XMLHttpRequest()
 
@@ -197,7 +219,33 @@
                             i.setAttribute("class", "form-check-input")
                             i.setAttribute("value", item.course_id)
 
-                            r.appendChild(i)                            
+                            r.appendChild(i)                         
+                        })
+                    } else {
+                        console.log('error')
+                    }
+            }
+            request.send()
+        }
+
+        function getTransferableOptions() {
+            var e = document.getElementById("inputFromCourse")
+            var s = document.getElementById("inputToCourse")
+            var courseId = e.options[e.selectedIndex].value
+            var request = new XMLHttpRequest()
+
+            request.open('GET', 'trades/getTradableCourses/' + courseId, true)
+
+            request.onload = function() {
+                var data = JSON.parse(this.response)
+                $("#inputToCourse").empty();
+                if (request.status >= 200 && request.status < 400) {
+                        data.forEach(item => {
+                            const o = document.createElement("option")
+                            o.setAttribute("value", item.course_id)
+                            o.innerHTML = item.name
+
+                            s.appendChild(o)                           
                         })
                     } else {
                         console.log('error')
@@ -268,15 +316,23 @@
             request.onload = function() {
                     var data = JSON.parse(this.response)
 
-                    const s = document.getElementById('inputCourse')
+                    const s1 = document.getElementById('inputCourse')
+                    const s2 = document.getElementById('inputFromCourse')
 
                     if (request.status >= 200 && request.status < 400) {
                         data.forEach(item => {
-                            const o = document.createElement("option")
-                            o.setAttribute("value", item.course_id)
-                            o.innerHTML = item.name
+                            const o1 = document.createElement("option")
+                            o1.setAttribute("value", item.course_id)
+                            o1.innerHTML = item.name
 
-                            s.appendChild(o)
+                            s1.appendChild(o1)
+
+                            const o2 = document.createElement("option")
+                            o2.setAttribute("value", item.course_id)
+                            o2.innerHTML = item.name
+
+                            s2.appendChild(o2)
+
                         })
                     } else {
                         console.log('error')
@@ -298,7 +354,7 @@
                 if (request.status >= 200 && request.status < 400) {
                     var data = JSON.parse(this.response)
                     username = document.getElementById('username')
-                    console.log(data)
+                    
                     stud_name = data.split('.')
                     username.innerHTML =   '<b>' + capitalize(stud_name[0]) + ' ' + capitalize(stud_name[1]) + '</b>' 
                 } else {
@@ -306,6 +362,26 @@
                 }
             }
             request.send()
+        }
+        function hideAll() {
+            document.getElementById("post_trade").className = "hide"
+            document.getElementById("trades-root").className = "hide"
+            document.getElementById("transfer").className = "hide"
+            document.getElementById("transfers-root").className = "hide"
+            document.getElementById("go-to-transfers").classList.add("hide")
+            document.getElementById("go-to-trades").classList.add("hide")
+        }
+        function showTrades() {
+            document.getElementById("post_trade").className = "show"
+            document.getElementById("trades-root").className = "show"
+            document.getElementById("go-to-transfers").classList.remove("hide")
+        }
+        function showTransfers() {
+            document.getElementById("transfer").className = "show"
+            document.getElementById("transfers-root").className = "show"
+            document.getElementById("go-to-trades").classList.remove("hide")
+        }
+        function transferRequests() {
         }
     </script>
     

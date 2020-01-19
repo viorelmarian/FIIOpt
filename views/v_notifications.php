@@ -36,7 +36,7 @@
                     <a class="nav-link" href="/notifications/display">{ Notifications }</a>
                 </li>
             </ul>
-            <form class="form-inline my-2 my-lg-0" action="/users/logout" method="post" >
+            <form class="form-inline my-2 my-lg-0" action="/users/logout/usr" method="post" >
                     <div id="username" class="username" style="color:white; margin-right:10px"></div>
                 <button class="btn btn-primary my-2 my-sm-0" type="submit">{ Logout }</button>
             </form>

@@ -59,11 +59,16 @@ class users
         header("Location: ../courses/display");
         exit();      
     }
-    function logout() {
+    function logout($from) {
         //Log Out
         unset($_SESSION["logged"]);  
         //Redirect accordingly
-        header("Location: ../courses/display");
+        if ($from == 'adm') {
+            header("Location: ../../admin");
+        } else {
+            header("Location: ../../");
+        }
+        
         exit();
     }
     function getLoggedUser() {

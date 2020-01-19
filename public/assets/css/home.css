@@ -159,3 +159,19 @@ body {
     margin: 5px;
     cursor: pointer;
 }
+.form-box {
+    background-color: #ffffff;
+    position: relative;
+    border-radius: 5px;
+    margin: 15px;
+
+}
+.hide {
+    display: none;
+}
+.show{
+    display: block;
+}
+a {
+    cursor: pointer;
+}

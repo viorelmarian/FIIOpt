@@ -41,7 +41,7 @@ class assignations {
             //Fetch data in assoc array
             while( $row = $result->fetch_assoc()) {
                 //For each Course get the corresponding professors
-                $professors = $courses->getProfessors($row["course_id"]);
+                $professors = $courses->getProfessorsByCourse($row["course_id"]);
                 //Add professors to the rest of the data
                 $i = 1;
                 while($professor = $professors->fetch_assoc()) {

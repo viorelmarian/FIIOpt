@@ -5,7 +5,7 @@ require_once "../models/m_administration.php";
 class administration {    
     function display() {
         //If logged in
-        if (isset($_SESSION["logged"])) {
+        if (isset($_SESSION["logged_adm"])) {
             //Allow access
             require_once "../views/v_administration.php";            
         } else {

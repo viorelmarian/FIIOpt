@@ -37,7 +37,10 @@ class admin
                     //If passwords match
                     if ($admin["admin_password"] === $_POST["login_pwd"]) { 
                         //Log In
-                        $_SESSION["logged"] = true;
+                        $_SESSION["logged_adm"] = true;
+                        //Redirect accordingly
+                        header("Location: ../administration/display");
+                        exit();      
                     } else {
                         $_SESSION["error_pwd"] = "Wrong Password!"; 
                     }
@@ -54,16 +57,20 @@ class admin
             if ($_POST["login_pwd"] == NULL) { 
                 $_SESSION["error_pwd"] = "Enter Password!";
             }
-        }
-        //Redirect accordingly
-        header("Location: ../administration/display");
-        exit();      
+        }   
+        header("Location: ../admin");     
+        exit();
     }
-    function logout() {
+    function logout($from) {
         //Log Out
-        unset($_SESSION["logged"]);  
+        unset($_SESSION["logged_adm"]);  
         //Redirect accordingly
-        header("Location: ../admin");
+        if ($from == 'adm') {
+            header("Location: ../../admin");
+        } else {
+            header("Location: ../../");
+        }
+        
         exit();
     }
     function getLoggedUser() {

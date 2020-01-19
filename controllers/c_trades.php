@@ -135,23 +135,31 @@ class trades {
                 //Create model instance
                 $trades = new m_trades($db->conn);
             }
-            //If trade is not already posted, insert trade in db
-            if ($trades->insertTrade($courses[0])) {
-                //If trade is not already posted insert options
-                foreach ($courses as $course) {
-                    //Do not insert the course that you trade as a trade option
-                    if ($course != $courses[0]) {
-                        $trades->insertOption($courses[0], $course);
+            //If options is not empty
+            if(count($courses) > 1) {
+                //If trade is not already posted, insert trade in db
+                if ($trades->insertTrade($courses[0])) {
+                    //If trade is not already posted insert options
+                    foreach ($courses as $course) {
+                        //Do not insert the course that you trade as a trade option
+                        if ($course != $courses[0]) {
+                            $trades->insertOption($courses[0], $course);
+                        }
                     }
+                    $response = array(  "status"=>"Success",
+                                        "msg" => "Your request has been successfully registered!"
+                                    );
+                } else {
+                    $response = array(  "status"=>"Error",
+                                        "msg" => "You already have a request for this course!"
+                                    );
                 }
-                $response = array(  "status"=>"Success",
-                                    "msg" => "Your request has been successfully registered!"
-                                );
             } else {
                 $response = array(  "status"=>"Error",
-                                    "msg" => "You already have a request for this course!"
+                                    "msg" => "You must choose trade options!"
                                 );
             }
+            
             echo json_encode($response);
         } else {
             //Redirect accordingly
