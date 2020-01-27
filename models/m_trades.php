@@ -142,11 +142,28 @@ class m_trades {
         return $stmt->get_result();
     }
     function acceptTransferRequest($transferId) {
+
+        $stmt = $this->conn->prepare("  SELECT  * 
+                                        FROM    `transfer_requests`
+                                        WHERE   `transfer_id` = ?");
+        $stmt->bind_param("s", $transferId);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+
         $stmt = $this->conn->prepare("  UPDATE  `transfer_requests` 
                                         SET     `status` = 'Accepted'
                                         WHERE   `transfer_id` = ?");
         $stmt->bind_param("s", $transferId);
         $stmt->execute();
+
+        $stmt = $this->conn->prepare("  UPDATE  `assigned_courses` 
+                                        SET     `course_id`  = ?,
+                                                `status`     = 'Transferred'
+                                        WHERE   `course_id`  = ?
+                                        AND     `student_id` = ?");
+        $stmt->bind_param("sss", $result["transfer_to_course_id"], $result["transfer_from_course_id"], $result["transfer_student_id"]);
+        $stmt->execute();
+
         return $stmt->get_result();
     }
     function declineTransferRequest($transferId) {

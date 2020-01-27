@@ -433,19 +433,17 @@ class courses {
                     $student_choices[] = $row;
                 }
                 foreach ($student_choices as $choice) {
-                    $result = $assignations->validateChoice($choice["course_id"]);
-                    //var_dump($result->fetch_assoc()["COUNT(*)"]);
+                    $result = $assignations->validateChoice($choice["course_id"], $student["student_id"]);
                     if ($result->fetch_assoc()["COUNT(*)"] == 0) {
                         $places_available = $courses->getAvailablePlaces($choice["course_id"]);
                         if ($places_available > 0) {
                             $assignations->insert($choice["course_id"], $student["student_id"]);
                         }
                     }
+                    $result = $assignations->validateChoice($choice["course_id"], $student["student_id"]);
                 }
                 
-            }
-
-            
+            }            
         } else {
             //Redirect accordingly
             require_once "../views/v_login.php";

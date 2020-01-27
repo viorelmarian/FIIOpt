@@ -13,7 +13,7 @@ class m_assignations {
         $stmt->execute();
         return $stmt->get_result(); 
     }
-    function validateChoice($courseId) {
+    function validateChoice($courseId, $user) {
         $stmt = $this->conn->prepare("SELECT COUNT(*)   FROM    `assigned_courses` 
                                                         JOIN    `courses`           ON `assigned_courses`.`course_id` = `courses`.`course_id` 
                                                         WHERE   `courses`.`package`     IN (
@@ -25,8 +25,7 @@ class m_assignations {
                                                                                             FROM    `courses` 
                                                                                             WHERE   `course_id` = ?)
                                                         AND     `assigned_courses`.`student_id` = ?");
-        $user = $_SESSION["login_usr"];
-        $stmt->bind_param("iis", $courseId, $courseId, $user);
+        $stmt->bind_param("sss", $courseId, $courseId, $user);
         $stmt->execute();
         return $stmt->get_result();
     }
@@ -58,7 +57,7 @@ class m_assignations {
                                         JOIN    `courses`           AS  `co`    ON `ch`.`course_id`  = `co`.`course_id` 
                                         JOIN    `students`          AS  `st`    ON `ch`.`student_id` = `st`.`student_id`
                                         WHERE   `st`.`student_id`  = ?
-                                        AND     `status` = 'Pending'");
+                                        AND     `status` = 'Assigned'");
         $user = $_SESSION["login_usr"];
         $stmt->bind_param("s", $user);
         $stmt->execute();

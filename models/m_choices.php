@@ -17,7 +17,7 @@ class m_choices {
                                                                                             WHERE   `course_id` = ?)
                                                         AND     `choices`.`student_id` = ?");
         $user = $_SESSION["login_usr"];
-        $stmt->bind_param("iis", $course, $course, $user);
+        $stmt->bind_param("sss", $course, $course, $user);
         $stmt->execute();
 
         $priority = $stmt->get_result()->fetch_assoc()["COUNT(*)"] + 1;
