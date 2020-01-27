@@ -213,7 +213,7 @@ class courses {
             }
             //Get data
             if($id == "Choose a course") {
-                $result = $courses->insert($name,$year,$package,$cycle,$link,$professor1,$professor2); 
+                $result = $courses->insert($name,$year,$package,$cycle,$link,$professor1,$professor2,$no_studs); 
                 if ($result) {
                     $response = array(  "status"=>"Success",
                                         "msg" => "Course inserted successfully!"
@@ -224,7 +224,7 @@ class courses {
                                     );
                 }
             } else {
-                $result = $courses->update($id,$name,$year,$package,$cycle,$link,$professor1,$professor2); 
+                $result = $courses->update($id,$name,$year,$package,$cycle,$link,$professor1,$professor2,$no_studs); 
                 if ($result) {
                     $response = array(  "status"=>"Success",
                                         "msg" => "Course updated successfully!"
@@ -371,11 +371,81 @@ class courses {
                     //Encode each value of the row in utf8
                     $row[$key] = utf8_encode($value);
                 }
-            //Add rows to Array
-            $rows[] = $row;
+                //Add rows to Array
+                $rows[] = $row;
             }
             //Encode in JSON Format and return
             echo json_encode($rows);
+        } else {
+            //Redirect accordingly
+            require_once "../views/v_login.php";
+        }
+    }
+
+    function assignCourses() {
+         //If logged in
+         if (isset($_SESSION["logged_adm"])) {
+            //If db connection does not exist
+            if(!isset($db)) {
+                //Create db connection
+                $db = new database_conn;
+                $db->connect();
+            }
+            //If model instance does not exist
+            if (!isset($courses)) {
+                //Create model instance
+                $courses = new m_courses($db->conn);
+            }
+            //If model instance does not exist
+            if (!isset($choices)) {
+                //Create model instance
+                $choices = new m_choices($db->conn);
+            }
+            //If model instance does not exist
+            if (!isset($assignations)) {
+                //Create model instance
+                $assignations = new m_assignations($db->conn);
+            }
+            //If model instance does not exist
+            if (!isset($users)) {
+                //Create model instance
+                $users = new m_users($db->conn);
+            }
+            $result = $users->getAllStudentsIds();
+            while( $row = $result->fetch_assoc()) {
+                foreach($row as $key => $value) {
+                    //Encode each value of the row in utf8
+                    $row[$key] = utf8_encode($value);
+                }
+                //Add rows to Array
+                $students[] = $row;
+            }
+            $student_choices = array();
+            foreach ($students as $student) {
+                $student_choices = array();
+                $result = $choices->getChoices($student["student_id"]);
+                while($row = $result->fetch_assoc()) {
+                    foreach($row as $key => $value) {
+                        //Encode each value of the row in utf8
+                        $row[$key] = utf8_encode($value);
+                    }
+                    //Add rows to Array
+                    $student_choices[] = $row;
+                }
+                foreach ($student_choices as $choice) {
+                    $result = $assignations->validateChoice($choice["course_id"]);
+                    //var_dump($result->fetch_assoc()["COUNT(*)"]);
+                    if ($result->fetch_assoc()["COUNT(*)"] == 0) {
+                        $places_available = $courses->getAvailablePlaces($choice["course_id"]);
+                        if ($places_available > 0) {
+                            $assignations->insert($choice["course_id"], $student["student_id"]);
+                        }
+                    }
+                }
+                
+            }
+
+            
         } else {
             //Redirect accordingly
             require_once "../views/v_login.php";

@@ -8,9 +8,10 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="../assets/css/home.css">
     <link rel="shortcut icon" href="../assets/pictures/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
     <title>{ FII_Opt } - Home</title>
 </head>
-<body onload="getTrades(), getAssignedCourses(), getTradableOptions(), displayUsername()">
+<body onload="getTrades(), getAssignedCourses(), getTradableOptions(), displayUsername(), getTransferRequests()">
 <div class = "screen_page"></div>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class = "container">
@@ -53,11 +54,11 @@
         <div class="columns">
             <div class="left-column" >
                 <div id="trades-root"></div>
-                <div id="transfers-root"></div>
+                <div id="transfers-root" class="hide"></div>
             </div>
 
             <div class="right-column">
-                <div id="post_trade">
+                <div id="post_trade" style="width:100%">
                     <form>
                         <div class="form-row">
                             <div class="form-group col-md-12">
@@ -89,7 +90,7 @@
                                 </select><br>
                             </div>          
                         </div>
-                        <button type="button" class="btn btn-success" style="position:relative" onclick="requestTransfer()">{ Request_Transfer }</button>
+                        <button type="button" class="btn btn-success" style="position:relative" onclick="insertTransferRequest()">{ Request_Transfer }</button>
                     </form>
                 </div>             
             </div>        
@@ -174,8 +175,8 @@
                     data = data + '.' + courseOptions[courseId].value
                 }
             }
-            var request = new XMLHttpRequest()
             console.log(data)
+            var request = new XMLHttpRequest()
             request.open('POST', 'trades/insert/' + data, true)
             request.onload = function() {
                 var data = JSON.parse(this.response)
@@ -381,7 +382,87 @@
             document.getElementById("transfers-root").className = "show"
             document.getElementById("go-to-trades").classList.remove("hide")
         }
-        function transferRequests() {
+        function getTransferRequests() {
+            var request = new XMLHttpRequest() 
+
+            request.open('GET', 'trades/getTransferRequests', true)
+
+            request.onload = function() {
+                
+                var data = JSON.parse(this.response)
+                const root = document.getElementById('transfers-root')
+                root.innerHTML = "";
+                console.log(data)
+                if(request.status >= 200 && request.status < 400) {
+                    data.forEach(item => {
+                        const d = document.createElement("div")
+                        d.setAttribute("class", "trades-card")
+                        
+                        root.appendChild(d)
+
+                        const p = document.createElement("p")
+                        p.innerHTML = 'You have requested to be transferred to <b>' + item.name + '</b>.'
+
+                        d.appendChild(p)
+                        
+                        const s = document.createElement("p")
+                        s.innerHTML = 'Status: <b>' + item.status + '</b>'
+
+                        d.appendChild(s)
+                        
+                        if (item.status == 'Pending') {
+                            const btn = document.createElement('a')
+                            btn.setAttribute('class', 'btn btn-notif btn-danger')
+                            btn.setAttribute('id', item.transfer_id)
+                            btn.setAttribute('onclick', 'openConfirmationCancel(event)')
+                            btn.textContent = '{ Cancel }'
+                            
+                            d.appendChild(btn)
+                        }
+                        
+                    })
+                } else {
+                    console.log('error')
+                }
+            }
+            request.send()
+        }
+        function openConfirmationCancel(e) {
+            this.choice = e.target.id
+            var request = new XMLHttpRequest()
+
+            request.open('POST', 'trades/cancelTransferRequest/' + this.choice, true)
+            request.onload = function() {
+                var data = JSON.parse(this.response)
+                
+                $('#infoModal').modal()
+                document.getElementById("infoModalStatus").textContent = data.status + '!'
+                document.getElementById("infoModalMsg").innerHTML = data.msg
+            }
+
+            request.send()
+        }
+        function insertTransferRequest() {
+            var e = document.getElementById("inputFromCourse")
+            var transferFromCourse = e.options[e.selectedIndex].value
+
+            var e = document.getElementById("inputToCourse")            
+            var transferToCourse = e.options[e.selectedIndex].value
+
+            var data = transferFromCourse + '.' + transferToCourse
+
+            var request = new XMLHttpRequest()
+            console.log(data)
+            request.open('POST', 'trades/insertTransferRequest/' + data, true)
+            request.onload = function() {
+                var data = JSON.parse(this.response)
+                
+                $('#infoModal').modal()
+                document.getElementById("infoModalStatus").textContent = data.status + '!'
+                document.getElementById("infoModalMsg").textContent = data.msg
+            }
+
+            request.send()
         }
     </script>
     

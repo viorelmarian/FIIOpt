@@ -5,19 +5,18 @@ class m_offers {
         $this->conn = $conn;
     }
     function insertOffer($tradeId, $courseId){
-        $stmt = $this->conn->prepare("INSERT    INTO   `trade_offers`(`trade_id`, `offer_student_id`, `offer_course_id`, `status`) 
-                                                VALUES  (?,
-                                                            (
-                                                                SELECT  `student_id` 
-                                                                FROM    `students` 
-                                                                WHERE   `username` = ?
-                                                            ),
+        $stmt = $this->conn->prepare("INSERT    INTO   `trade_offers`(`offer_id`, `trade_id`, `offer_student_id`, `offer_course_id`, `status`) 
+                                                VALUES  (
+                                                        ?,
+                                                        ?,
+                                                        ?,
                                                         ?,
                                                         ?)"
                                         );
         $user = $_SESSION["login_usr"];   
         $status = "Pending";
-        $stmt->bind_param("isis", $tradeId, $user, $courseId, $status);
+        $offer_id = sha1(microtime(true).mt_rand(10000,90000));;
+        $stmt->bind_param("sssss", $offer_id, $tradeId, $user, $courseId, $status);
         $stmt->execute();
     }
     function determineTradeOffer($tradeId) {
@@ -43,14 +42,10 @@ class m_offers {
                                                                                                 WHERE   `trade_id` = ?
                                                                                             )
                                                                     )
-                                        AND     `student_id`         IN (
-                                                                            SELECT  `student_id` 
-                                                                            FROM    `students` 
-                                                                            WHERE   `username` = ? 
-                                                                        )");
+                                        AND     `student_id` = ?");
         
         $user = $_SESSION["login_usr"];                                
-        $stmt->bind_param("iis", $tradeId, $tradeId, $user);
+        $stmt->bind_param("sss", $tradeId, $tradeId, $user);
         $stmt->execute();
         return $stmt->get_result();                                    
     }
@@ -58,14 +53,9 @@ class m_offers {
     function getOffersForTrade($tradeId){
         $stmt = $this->conn->prepare("  SELECT COUNT(*) FROM `trade_offers` 
                                         WHERE   `trade_id` = ? 
-                                        AND     `offer_student_id` 
-                                        IN (
-                                                SELECT `student_id` 
-                                                FROM `students` 
-                                                WHERE `username` = ?
-                                            )");
+                                        AND     `offer_student_id` = ?");
         $user = $_SESSION["login_usr"];                                
-        $stmt->bind_param("is", $tradeId, $user);
+        $stmt->bind_param("ss", $tradeId, $user);
         $stmt->execute();
         return $stmt->get_result();   
     }
@@ -74,7 +64,7 @@ class m_offers {
         $stmt = $this->conn->prepare("  SELECT COUNT(*) FROM `trade_options` 
                                         WHERE   `trade_id` = ? 
                                         AND     `option_course_id` = ?");
-        $stmt->bind_param("ii", $tradeId, $courseId);
+        $stmt->bind_param("ss", $tradeId, $courseId);
         $stmt->execute();
         return $stmt->get_result();   
     }
@@ -82,7 +72,7 @@ class m_offers {
     function getTradeStatus($tradeId) {
         $stmt = $this->conn->prepare("  SELECT  `status` FROM `trades` 
                                         WHERE   `trade_id` = ?");
-        $stmt->bind_param("i", $tradeId);
+        $stmt->bind_param("s", $tradeId);
         $stmt->execute();
         return $stmt->get_result();  
     }
@@ -91,11 +81,7 @@ class m_offers {
         $stmt = $this->conn->prepare("  SELECT * FROM   `trades` 
                                         JOIN            `trade_offers`
                                         ON              `trades`.`trade_id` = `trade_offers`.`trade_id`
-                                        WHERE           `donor_student_id`  IN (
-                                                                                SELECT `student_id` 
-                                                                                FROM `students` 
-                                                                                WHERE `username` = ?
-                                                                            )
+                                        WHERE           `donor_student_id`  = ?
                                         AND             `trade_offers`.`status` = 'Pending'");
         $user = $_SESSION["login_usr"];
         $stmt->bind_param("s", $user);
@@ -108,12 +94,12 @@ class m_offers {
             $stmt = $this->conn->prepare("  SELECT  `name` 
                                             FROM    `courses` 
                                             WHERE   `course_id` = ?");
-            $stmt->bind_param("i", $row["donor_course_id"]);
+            $stmt->bind_param("s", $row["donor_course_id"]);
             $stmt->execute();
             $result2 = $stmt->get_result();
             $tradeOffer["donor_course_name"] = $result2->fetch_assoc()["name"];
 
-            $stmt->bind_param("i", $row["offer_course_id"]);
+            $stmt->bind_param("s", $row["offer_course_id"]);
             $stmt->execute();
             $result2 = $stmt->get_result();
             $tradeOffer["offer_course_name"] = $result2->fetch_assoc()["name"];
@@ -121,7 +107,7 @@ class m_offers {
             $stmt = $this->conn->prepare("  SELECT  `username` 
                                             FROM    `students` 
                                             WHERE   `student_id` = ?");
-            $stmt->bind_param("i", $row["offer_student_id"]);
+            $stmt->bind_param("s", $row["offer_student_id"]);
             $stmt->execute();
             $result2 = $stmt->get_result();
             $tradeOffer["offer_student_name"] = $result2->fetch_assoc()["username"];
@@ -138,7 +124,7 @@ class m_offers {
                                         SET     `status` = 'Accepted'
                                         WHERE   `offer_id` = ?");
         
-        $stmt->bind_param("i", $offerId);
+        $stmt->bind_param("s", $offerId);
         $stmt->execute();          
         $stmt->close(); 
 
@@ -146,7 +132,7 @@ class m_offers {
                                         FROM    `trade_offers` 
                                         WHERE   `offer_id` = ?");
         
-        $stmt->bind_param("i", $offerId);
+        $stmt->bind_param("s", $offerId);
         $stmt->execute();        
         
         $result = $stmt->get_result();  
@@ -163,7 +149,7 @@ class m_offers {
                                         WHERE   `trade_id` = ?
                                         AND     `status` <> 'Accepted' ");
         
-        $stmt->bind_param("i", $tradeId);
+        $stmt->bind_param("s", $tradeId);
         $stmt->execute();          
         $stmt->close(); 
 
@@ -173,7 +159,7 @@ class m_offers {
                                                 `status` = 'Completed'
                                         WHERE   `trade_id` = ?");
         
-        $stmt->bind_param("iii", $offerCourseId, $offerStudentId, $tradeId);
+        $stmt->bind_param("sss", $offerCourseId, $offerStudentId, $tradeId);
         $stmt->execute();          
         $stmt->close(); 
 
@@ -182,7 +168,7 @@ class m_offers {
                                         FROM    `trades`
                                         WHERE   `trade_id` = ?");
         
-        $stmt->bind_param("i", $tradeId);
+        $stmt->bind_param("s", $tradeId);
         $stmt->execute();   
         $result = $stmt->get_result();  
         $result = $result->fetch_assoc();
@@ -198,7 +184,7 @@ class m_offers {
                                         WHERE   `student_id` = ?
                                         AND     `course_id`  = ?");
         
-        $stmt->bind_param("iii", $offerCourseId, $donorStudentId, $donorCourseId);
+        $stmt->bind_param("sss", $offerCourseId, $donorStudentId, $donorCourseId);
         $stmt->execute();          
         $stmt->close();
 
@@ -208,7 +194,7 @@ class m_offers {
                                         WHERE   `student_id` = ?
                                         AND     `course_id`  = ?");
         
-        $stmt->bind_param("iii", $donorCourseId, $offerStudentId, $offerCourseId);
+        $stmt->bind_param("sss", $donorCourseId, $offerStudentId, $offerCourseId);
         $stmt->execute();          
         $stmt->close();
     }
@@ -218,7 +204,7 @@ class m_offers {
                                         SET     `status` = 'Declined'
                                         WHERE   `offer_id` = ?");
         
-        $stmt->bind_param("i", $offerId);
+        $stmt->bind_param("s", $offerId);
         $stmt->execute();          
         $stmt->close(); 
     }

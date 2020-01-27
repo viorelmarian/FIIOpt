@@ -32,7 +32,7 @@ class choices {
                 $courses = new m_courses($db->conn);
             }
             //Get data
-            $result = $choices->getChoices();   
+            $result = $choices->getChoices($_SESSION["login_usr"]);   
             $rows = array();        
             //Fetch data in assoc array
             while( $row = $result->fetch_assoc()) {
@@ -72,21 +72,21 @@ class choices {
                 $choices = new m_choices($db->conn);
             }
             //Validations
-            $result = $choices->validateChoice($courseId);
+            // $result = $choices->validateChoice($courseId);
             
-            if (array_values($result->fetch_assoc())[0] == 0) {
+            // if (array_values($result->fetch_assoc())[0] == 0) {
                 //Insert choosen option
                 $choices->insert($courseId);
                 //Generate response
                 $response = array(  "status"=>"Success",
                                     "msg" => "Your choice has been successfully registered!"
                                 );
-            } else {
-                //Generate response
-                $response = array(  "status"=>"Error",
-                                    "msg" => "A course from this package was already choosen!"
-                                );
-            }
+            // } else {
+            //     //Generate response
+            //     $response = array(  "status"=>"Error",
+            //                         "msg" => "A course from this package was already choosen!"
+            //                     );
+            // }
             echo json_encode($response);
         } else {
             //Redirect accordingly

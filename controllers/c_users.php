@@ -20,9 +20,6 @@ class users
         //Reset Errors
         unset($_SESSION["error_usr"]);
         unset($_SESSION["error_pwd"]);
-        
-        //Preserve state of the username
-        $_SESSION["login_usr"] = $_POST["login_usr"];
 
         //If username was inserted
         if ($_POST["login_usr"] != NULL) { 
@@ -30,6 +27,8 @@ class users
             $result = $users->getByUser($_POST["login_usr"]);
             //Fetch data in assoc array
             $user = $result->fetch_assoc();
+            //Preserve state of the username
+            $_SESSION["login_usr"] = $user["student_id"];
             //If username exists in the database  
             if ($user !== NULL) {
                 //If password was inserted
@@ -72,7 +71,18 @@ class users
         exit();
     }
     function getLoggedUser() {
-        echo json_encode($_SESSION["login_usr"]);
+        //Create Database Connection
+        if (!isset($db)) {
+            $db = new database_conn;
+            $db->connect();            
+        }
+        //Create Model Instance
+        if (!isset($users)) {            
+            $users = new m_users($db->conn);
+        }
+
+        $result = $users->getById($_SESSION["login_usr"]);
+        echo json_encode($result->fetch_assoc()["username"]);
     }
 }
 ?>

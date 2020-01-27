@@ -338,10 +338,183 @@ class trades {
                 //Create model instance
                 $offers = new m_offers($db->conn);                
             }
-            $tradeOffers = $offers->declineOffer($offerId);
+            $offers->declineOffer($offerId);
             $response = array(  
                 "status"=>"Success",
                 "msg" => "Trade declined!"
+            );
+            echo json_encode($response);    
+        } else {
+            //Redirect accordingly
+            require_once "../views/v_login.php";
+        }
+    }
+    function insertTransferRequest($chosenCourses) {
+        //Get course id's from param
+        $courses = explode('.', $chosenCourses);
+        //If logged in
+        if (isset($_SESSION["logged"])) {
+            //If db connection does not exist
+            if(!isset($db)) {
+                //Create db connection
+                $db = new database_conn;
+                $db->connect();
+            }
+            //If model instance does not exist
+            if (!isset($trades)) {
+                //Create model instance
+                $trades = new m_trades($db->conn);                
+            }
+
+            if(count($courses) > 1) { 
+                //Check if transfer request already exists for this course
+                $transferRequests = $trades->getTransferRequestsForCourse($courses[0]);
+
+                if (array_values($transferRequests->fetch_assoc())[0] == 0) {
+                    $trades->insertTransferRequest($courses[0], $courses[1]);
+                    $response = array(  
+                        "status"=>"Success",
+                        "msg" => "Transfer requested successfully!"
+                    );
+                } else {
+                    $response = array(  
+                        "status"=>"Error",
+                        "msg" => "A transfer request already exists for this course!"
+                    ); 
+                }
+                
+            } else { 
+                $response = array(  
+                    "status"=>"Error",
+                    "msg" => "Your selections are invalid!"
+                );
+            }
+            echo json_encode($response); 
+              
+        } else {
+            //Redirect accordingly
+            require_once "../views/v_login.php";
+        }
+    }
+    function getTransferRequests() {
+        if (isset($_SESSION["logged"])) {
+            //If db connection does not exist
+            if(!isset($db)) {
+                //Create db connection
+                $db = new database_conn;
+                $db->connect();
+            }
+            //If model instance does not exist
+            if (!isset($trades)) {
+                //Create model instance
+                $trades = new m_trades($db->conn);                
+            }            
+            $result = $trades->getTransferRequestsForUser();
+            $rows = array();        
+            //Fetch data in assoc array
+            while($row = $result->fetch_assoc()) {
+                foreach($row as $key => $value) {
+                    //Encode each value of the row in utf8
+                    $row[$key] = utf8_encode($value);
+                }
+            //Add rows in Array
+            $rows[] = $row;
+            }
+            echo json_encode($rows);    
+        } elseif (isset($_SESSION["logged_adm"])) {
+             //If db connection does not exist
+             if(!isset($db)) {
+                //Create db connection
+                $db = new database_conn;
+                $db->connect();
+            }
+            //If model instance does not exist
+            if (!isset($trades)) {
+                //Create model instance
+                $trades = new m_trades($db->conn);                
+            }            
+            $result = $trades->getTransferRequests();
+            $rows = array();        
+            //Fetch data in assoc array
+            while($row = $result->fetch_assoc()) {
+                foreach($row as $key => $value) {
+                    //Encode each value of the row in utf8
+                    $row[$key] = utf8_encode($value);
+                }
+            //Add rows in Array
+            $rows[] = $row;
+            }
+            echo json_encode($rows);    
+        } else {
+            //Redirect accordingly
+            require_once "../views/v_login.php";
+        }
+    }
+    function cancelTransferRequest($transferId) {
+        if (isset($_SESSION["logged_adm"])) {
+            //If db connection does not exist
+            if(!isset($db)) {
+                //Create db connection
+                $db = new database_conn;
+                $db->connect();
+            }
+            //If model instance does not exist
+            if (!isset($trades)) {
+                //Create model instance
+                $trades = new m_trades($db->conn);                
+            }
+            $trades->cancelTransferRequest($transferId);
+            $response = array(  
+                "status"=>"Success",
+                "msg" => "Transfer canceled successfully!"
+            );
+            echo json_encode($response);    
+        } else {
+            //Redirect accordingly
+            require_once "../views/v_login.php";
+        }
+    }
+    function acceptTransferRequest($transferId) {
+        if (isset($_SESSION["logged_adm"])) {
+            //If db connection does not exist
+            if(!isset($db)) {
+                //Create db connection
+                $db = new database_conn;
+                $db->connect();
+            }
+            //If model instance does not exist
+            if (!isset($trades)) {
+                //Create model instance
+                $trades = new m_trades($db->conn);                
+            }
+            $trades->acceptTransferRequest($transferId);
+            $response = array(  
+                "status"=>"Success",
+                "msg" => "Transfer accepted successfully!"
+            );
+            echo json_encode($response);    
+        } else {
+            //Redirect accordingly
+            require_once "../views/v_login.php";
+        }
+    }
+    function declineTransferRequest($transferId) {
+        if (isset($_SESSION["logged_adm"])) {
+            //If db connection does not exist
+            if(!isset($db)) {
+                //Create db connection
+                $db = new database_conn;
+                $db->connect();
+            }
+            //If model instance does not exist
+            if (!isset($trades)) {
+                //Create model instance
+                $trades = new m_trades($db->conn);                
+            }
+            $trades->declineTransferRequest($transferId);
+            $response = array(  
+                "status"=>"Success",
+                "msg" => "Transfer declined successfully!"
             );
             echo json_encode($response);    
         } else {

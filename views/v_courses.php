@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="../assets/css/home.css">
     <link rel="shortcut icon" href="../assets/pictures/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
     <title>{ FII_Opt } - Home</title>
 </head>
 <body onload="getCourses(), displayUsername()">
@@ -46,10 +47,32 @@
     </nav>
     <div class = "container aligner">
         <div class="filter-bar">
-            <input class="form-control mr-sm-2 filter-name" type="search" placeholder="Search" aria-label="Search" id="search" oninput="getCourses()">
-               
+            <input class="form-control mr-sm-2 filter-name" type="search" placeholder="Search" aria-label="Search" id="search" oninput="getCourses()">               
         </div>
-        <span class = "row" id="root">  
+        <div class="package" id="package1">
+            <h4>Pachet 1 - Alegeti optiunile in ordinea dorita!</h4>
+        </div>
+        <span class = "row" id="root1">  
+        </span>
+        <div class="package" id="package2">
+            <h4>Pachet 2 - Alegeti optiunile in ordinea dorita</h4>
+        </div>
+        <span class = "row" id="root2">  
+        </span>
+        <div class="package" id="package3">
+            <h4>Pachet 3 - Alegeti optiunile in ordinea dorita</h4>
+        </div>
+        <span class = "row" id="root3">  
+        </span>
+        <div class="package" id="package4">
+            <h4>Pachet 4 - Alegeti optiunile in ordinea dorita</h4>
+        </div>
+        <span class = "row" id="root4">  
+        </span>
+        <div class="package" id="package5">
+            <h4>Pachet 5 - Alegeti optiunile in ordinea dorita</h4>
+        </div>
+        <span class = "row" id="root5">  
         </span>
     </div>
     <!-- Modal -->
@@ -87,7 +110,7 @@
                     <p></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="location.reload()">Close</button>
                 </div>
             </div>
         </div>
@@ -101,12 +124,45 @@
             request.onload = function() {
                 var data = JSON.parse(this.response)
 
-                const row = document.getElementById('root')
-                row.innerHTML = "";
+                document.getElementById('root1').innerHTML = ""
+                document.getElementById('root2').innerHTML = ""
+                document.getElementById('root3').innerHTML = ""
+                document.getElementById('root4').innerHTML = ""
+                document.getElementById('root5').innerHTML = ""
+
+                document.getElementById('package1').classList.add("hide")
+                document.getElementById('package2').classList.add("hide")
+                document.getElementById('package3').classList.add("hide")
+                document.getElementById('package4').classList.add("hide")
+                document.getElementById('package5').classList.add("hide")
 
                 if (request.status >= 200 && request.status < 400) {
                     data.forEach(item => {
-
+                        console.log(item.package)
+                        switch (item.package) {
+                            case '1':
+                                row = document.getElementById('root1')
+                                document.getElementById('package1').classList.remove("hide")
+                                break;
+                            case '2':
+                                row = document.getElementById('root2')         
+                                document.getElementById('package2').classList.remove("hide")                       
+                                break;
+                            case '3':
+                                row = document.getElementById('root3')        
+                                document.getElementById('package3').classList.remove("hide")                        
+                                break;
+                            case '4':
+                                row = document.getElementById('root4')                   
+                                document.getElementById('package4').classList.remove("hide")             
+                                break;
+                            case '5':
+                                row = document.getElementById('root5')                 
+                                document.getElementById('package5').classList.remove("hide")               
+                                break;                        
+                            default:
+                                break;
+                        }
                         const col = document.createElement('div')
                         col.setAttribute('class', 'col-sm card-align')
 
@@ -193,6 +249,7 @@
         }
         function saveCourseChoice() {
             var request = new XMLHttpRequest()
+            console.log(this.choice)
             request.open('POST', 'choices/insert/' + this.choice, true)
             request.onload = function() {
                 var data = JSON.parse(this.response) 

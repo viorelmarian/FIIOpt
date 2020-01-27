@@ -10,6 +10,10 @@ body {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    font-family: 'Poppins', sans-serif; 
+}
+h4 {
+    margin: 0
 }
 .card-img-top {
     height: 15rem;
@@ -21,6 +25,12 @@ body {
 .center {
     margin: 0 auto;
     margin-top: 2rem;
+}
+.center-td {
+    text-align: center;
+}
+.table td {
+    vertical-align: middle;
 }
 .screen_page {
     position: fixed;
@@ -46,7 +56,7 @@ body {
     border-color: #28a745 !important;  
 }
 .card-body {
-    min-height: 300px;
+    min-height: 425px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -125,6 +135,19 @@ body {
     justify-content: space-between;
     flex-wrap: wrap;
 }
+.package {
+    margin-top: 20px;
+    border-radius: 5px;
+    width:100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 10px 30px 10px 30px; 
+    text-align: center;
+    background-color: #e3e3e3;
+    position: relative;
+}
 .left-column {
     padding: 20px;
     border-radius: 5px;
@@ -174,4 +197,7 @@ body {
 }
 a {
     cursor: pointer;
+}
+.row {    
+    justify-content: space-between;
 }

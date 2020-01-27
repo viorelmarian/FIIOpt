@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="../assets/css/home.css">
     <link rel="shortcut icon" href="../assets/pictures/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
     <title>{ FII_Opt } - Home</title>
 </head>
 <body onload="getChoices(), getAssignations(), displayUsername()">
@@ -49,6 +50,7 @@
             <table class="table table-striped table-light table-container table-hover">
                 <thead>
                     <tr>
+                        <th scope="col">Priority</th>
                         <th scope="col">Name</th>
                         <th scope="col">Professor 1</th>
                         <th scope="col">Professor 2</th>
@@ -101,6 +103,12 @@
                             const tr = document.createElement('tr')
                             row.appendChild(tr)
 
+                            const td0 = document.createElement('td')
+                            td0.setAttribute("class", "center-td")
+                            td0.innerText = item.priority
+
+                            tr.appendChild(td0)
+
                             const td1 = document.createElement('td')
                             td1.innerText = item.name
 
@@ -119,11 +127,13 @@
                             tr.appendChild(td3)
 
                             const td4 = document.createElement('td')
+                            td4.setAttribute("class", "center-td")
                             td4.innerText = item.year
 
                             tr.appendChild(td4)
 
-                            const td5 = document.createElement('td')
+                            const td5 = document.createElement('td')                            
+                            td5.setAttribute("class", "center-td")
                             td5.innerText = item.package
 
                             tr.appendChild(td5)
@@ -175,11 +185,13 @@
                         tr.appendChild(td3)
 
                         const td4 = document.createElement('td')
+                        td4.setAttribute("class", "center-td")
                         td4.innerText = item.year
 
                         tr.appendChild(td4)
 
                         const td5 = document.createElement('td')
+                        td5.setAttribute("class", "center-td")
                         td5.innerText = item.package
 
                         tr.appendChild(td5)
