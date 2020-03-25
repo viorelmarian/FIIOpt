@@ -8,6 +8,7 @@ require_once "../controllers/c_notifications.php";
 require_once "../controllers/c_assignations.php";
 require_once "../controllers/c_admin.php";
 require_once "../controllers/c_administration.php";
+require_once "../controllers/c_pdf.php";
 
 $count = substr_count ($_SERVER["REQUEST_URI"], "/");
 

@@ -140,7 +140,47 @@
                 </div>
                 <div id="transfers" class="hide">
                 </div> 
-                <div id="statistics" class="hide">
+                <div id="statistics" class="hide"> 
+                    <div class="card-body form-box">
+                        <h1>Optionale</h1>
+                        <form>
+                            <div class="form-column" style="padding-top: 15px;">
+                                <div class="form-group col-md-6">
+                                    <label for="name">Course Name</label>
+                                    <input type="text" class="form-control" id="name" placeholder="Name" required>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label for="year">Study Year</label>
+                                    <input type="text" class="form-control" id="year" placeholder="Year" required>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <button type="button" class="btn btn-primary" onclick="pdfStudents()">Download</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-body form-box">
+                        <h1>Transferuri</h1>
+                        <form>
+                            <div class="form-column" style="padding-top: 15px;">
+                                <div class="form-group col-md-6">
+                                    <label for="name">From Course</label>
+                                    <input type="text" class="form-control" id="name" placeholder="Name" required>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="year">To Course</label>
+                                    <input type="text" class="form-control" id="year" placeholder="Name" required>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label for="year">Study Year</label>
+                                    <input type="text" class="form-control" id="year" placeholder="Year" required>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <button type="button" class="btn btn-primary" onclick="pdfStudentsOfCourse()">Download</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>                            
             </div>                
         </div>
@@ -189,6 +229,8 @@
             courses = document.getElementById("professors")
             courses.className = "hide"
             courses = document.getElementById("transfers")
+            courses.className = "hide"
+            courses = document.getElementById("statistics")
             courses.className = "hide"
         }
         function displayCourses() {

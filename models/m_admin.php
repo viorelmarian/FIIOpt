@@ -11,7 +11,7 @@ class m_admin {
     }
     function getById($id) {    
         $stmt = $this->conn->prepare("SELECT * FROM `admins` WHERE `admin_id` = ?");        
-        $stmt->bind_param("i", $id);
+        $stmt->bind_param("s", $id);
         $stmt->execute();
         return $stmt->get_result();        
     }
@@ -29,13 +29,13 @@ class m_admin {
     }   
     function update($id, $username, $password) {
         $stmt = $this->conn->prepare("UPDATE `admins` SET `admin_username` = ?,`admin_password` = ? WHERE `admin_id` = ?");        
-        $stmt->bind_param("ssi", $username, $password, $id);
+        $stmt->bind_param("sss", $username, $password, $id);
         $stmt->execute();
         return $stmt->get_result(); 
     }
     function delete($id) {
         $stmt = $this->conn->prepare("DELETE FROM `admins` WHERE `admin_id` = ?");        
-        $stmt->bind_param("i", $id);
+        $stmt->bind_param("s", $id);
         $stmt->execute();
         return $stmt->get_result(); 
     }

@@ -146,7 +146,6 @@
                 document.getElementById("infoModalStatus").textContent = data.status + '!'
                 document.getElementById("infoModalMsg").textContent = data.msg
             }
-
             request.send()
         }
         function openConfirmationOfferCourse(e) {

@@ -3,8 +3,10 @@
 class database_conn
 {   
     public $conn;
-    function connect() {        
-        require_once "db_config.php";
+    function connect() {
+        if (!isset($servername) || !isset($username) || !isset($password) || !isset($database)) {
+            require "db_config.php";
+        }
 
         $this->conn = new mysqli($servername, $username, $password, $database);
 

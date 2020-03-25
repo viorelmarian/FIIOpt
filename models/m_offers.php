@@ -4,6 +4,13 @@ class m_offers {
     function m_offers($conn) {
         $this->conn = $conn;
     }
+    function getOfferById($offerId) {
+        $stmt = $this->conn->prepare("  SELECT * FROM `trade_offers` 
+                                        WHERE   `offer_id` = ?");                              
+        $stmt->bind_param("s", $offerId);
+        $stmt->execute();
+        return $stmt->get_result();  
+    }
     function insertOffer($tradeId, $courseId){
         $stmt = $this->conn->prepare("INSERT    INTO   `trade_offers`(`offer_id`, `trade_id`, `offer_student_id`, `offer_course_id`, `status`) 
                                                 VALUES  (

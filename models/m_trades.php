@@ -88,8 +88,7 @@ class m_trades {
         return $stmt->get_result(); 
     }
     function getUserForTrade($tradeId) {
-        $stmt = $this->conn->prepare("  SELECT  `username`   FROM   `students`
-                                        JOIN    `trades`     ON     `donor_student_id` = `student_id`                                        
+        $stmt = $this->conn->prepare("  SELECT  `donor_student_id`   FROM   `trades`                                     
                                         WHERE   `trade_id` = ?");     
         $stmt->bind_param("s", $tradeId);
         $stmt->execute();

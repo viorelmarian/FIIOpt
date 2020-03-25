@@ -74,7 +74,18 @@ class admin
         exit();
     }
     function getLoggedUser() {
-        echo json_encode($_SESSION["login_usr"]);
+        //Create Database Connection
+        if (!isset($db)) {
+            $db = new database_conn;
+            $db->connect();            
+        }
+        //Create Model Instance
+        if (!isset($admin)) {            
+            $admin = new m_admin($db->conn);
+        }
+
+        $result = $admin->getById($_SESSION["login_usr"]);
+        echo json_encode($result->fetch_assoc()["username"]);
     }
 }
 ?>

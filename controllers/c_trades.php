@@ -231,7 +231,7 @@ class trades {
 
             //Check user own offer
             $result = $trades->getUserForTrade($tradeId);
-            $donor_user = $result->fetch_assoc()["username"];
+            $donor_user = $result->fetch_assoc()["donor_student_id"];
             if ($donor_user != $_SESSION["login_usr"]) {
                 //Check user offer exists
                 $result = $offers->getOffersForTrade($tradeId);
@@ -248,6 +248,10 @@ class trades {
                             $response = array(  "status"=>"Success",
                                                 "msg" => "Your offer has been successfully registered!"
                             );
+                            if (!isset($notifications)) {
+                                $notifications = new notifications;
+                            }
+                            $notifications->sendEmailNewTradeOffer($tradeId, $courseId);
                         } else {
                             $response = array(  "status"=>"Error",
                                                 "msg" => "Trade is no longer available!"
@@ -314,6 +318,10 @@ class trades {
                 $offers = new m_offers($db->conn);                
             }
             $tradeOffers = $offers->acceptOffer($offerId);
+            if (!isset($notifications)) {
+                $notifications = new notifications;
+            }
+            $notifications->sendEmailAcceptTradeOffer($offerId);
             $response = array(  
                 "status"=>"Success",
                 "msg" => "Trade completed successfully!"
@@ -339,6 +347,10 @@ class trades {
                 $offers = new m_offers($db->conn);                
             }
             $offers->declineOffer($offerId);
+            if (!isset($notifications)) {
+                $notifications = new notifications;
+            }
+            $notifications->sendEmailDeclineTradeOffer($offerId);
             $response = array(  
                 "status"=>"Success",
                 "msg" => "Trade declined!"
@@ -488,6 +500,10 @@ class trades {
                 $trades = new m_trades($db->conn);                
             }
             $trades->acceptTransferRequest($transferId);
+            if (!isset($notifications)) {
+                $notifications = new notifications;
+            }
+            $notifications->sendEmailAcceptTransferRequest($transferId);
             $response = array(  
                 "status"=>"Success",
                 "msg" => "Transfer accepted successfully!"
@@ -512,6 +528,10 @@ class trades {
                 $trades = new m_trades($db->conn);                
             }
             $trades->declineTransferRequest($transferId);
+            if (!isset($notifications)) {
+                $notifications = new notifications;
+            }
+            $notifications->sendEmailDeclineTraansferRequest($transferId);
             $response = array(  
                 "status"=>"Success",
                 "msg" => "Transfer declined successfully!"

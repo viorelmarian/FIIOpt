@@ -46,6 +46,22 @@ class m_assignations {
         $stmt->execute();
         return $stmt->get_result();
     }
+    function getAssignationsForStudent($student_id) {
+        $stmt = $this->conn->prepare("  SELECT      `name`, 
+                                                    `package`, 
+                                                    `status`,
+                                                    `username`,
+                                                    `co`.`year`, 
+                                                    `co`.`course_id`    
+                                        FROM        `assigned_courses`   AS  `ch` 
+                                        JOIN        `courses`   AS  `co`    ON `ch`.`course_id`  = `co`.`course_id` 
+                                        JOIN        `students`  AS  `st`    ON `ch`.`student_id` = `st`.`student_id`
+                                        WHERE       `st`.`student_id`  = ?
+                                        ORDER BY    `year`, `package`, `name`");
+        $stmt->bind_param("s", $student_id);
+        $stmt->execute();
+        return $stmt->get_result();
+    }
     function getTradeCourses() {
         $stmt = $this->conn->prepare("  SELECT  `name`, 
                                                 `package`, 
