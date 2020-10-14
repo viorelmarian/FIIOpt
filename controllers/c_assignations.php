@@ -76,11 +76,11 @@ class assignations {
                 $assignations = new m_assignations($db->conn);
             }
             //Validations
-            $result = $assignations->validateChoice($courseId);
+            $result = $assignations->validateChoice($courseId, $_SESSION["login_usr"]);
             
             if (array_values($result->fetch_assoc())[0] == 0) {
                 //Insert choosen option
-                $assignations->insert($courseId);
+                $assignations->insert($courseId, $_SESSION["login_usr"]);
                 //Generate response
                 $response = array(  "status"=>"Success",
                                     "msg" => "Your choice has been successfully registered!"

@@ -35,7 +35,7 @@ class m_trades {
                                                 FROM    `trades` 
                                                 WHERE   `donor_student_id` = ?
                                                 AND     `donor_course_id` = ?");
-        $stmt->bind_param("si", $_SESSION["login_usr"], $course);
+        $stmt->bind_param("ss", $_SESSION["login_usr"], $course);
         $stmt->execute();
         if (array_values($stmt->get_result()->fetch_assoc())[0] == 0) {
             $stmt = $this->conn->prepare("INSERT    INTO    `trades`(`trade_id`, `donor_student_id`, `donor_course_id`, `status`) 
