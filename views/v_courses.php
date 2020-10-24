@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <base href="/">
     <meta charset="UTF-8">
@@ -11,69 +12,56 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
     <title>{ FII_Opt } - Home</title>
 </head>
-<body onload="getCourses(), displayUsername()">
-<div class = "screen_page"></div>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class = "container">
-        <a class="navbar-brand" href="/">
-            <img src="../assets/pictures/banner.png" alt="" width="100px">
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                    <a class="nav-link" href="/courses/display">{ Choose_Opt }</a>
-                </li> 
-                <li class="nav-item">
-                    <a class="nav-link" href="/choices/display">{ Assigned_Opt }</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/trades/display">{ Trade_Opt }</a>
-                </li>  
-                <li class="nav-item">
-                    <a class="nav-link" href="/notifications/display">{ Notifications }</a>
-                </li>  
-            </ul>
-            <form class="form-inline my-2 my-lg-0" action="/users/logout/usr" method="post" >
+<body onload="getCourses(), displayUsername()">
+    <div class="screen_page"></div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="../assets/pictures/banner.png" alt="" width="100px">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/courses/display">{ Choose_Opt }</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/choices/display">{ Assigned_Opt }</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/trades/display">{ Trade_Opt }</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/notifications/display">{ Notifications }</a>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0" action="/users/logout/usr" method="post">
                     <div id="username" class="username" style="color:white; margin-right:10px"></div>
-                <button class="btn btn-primary my-2 my-sm-0" type="submit">{ Logout }</button>
-            </form>
+                    <button class="btn btn-primary my-2 my-sm-0" type="submit">{ Logout }</button>
+                </form>
+            </div>
         </div>
-    </div>
-        
     </nav>
-    <div class = "container aligner">
-        <div class="filter-bar">
-            <input class="form-control mr-sm-2 filter-name" type="search" placeholder="Search" aria-label="Search" id="search" oninput="getCourses()">               
+    <div class="container">
+        <div class="row mt-4 filter-bar">
+            <div class="col-md-4">
+                <select class="form-control" id="package-select" onchange="changePackage()">
+                </select>
+            </div>
+            <div class="col-md-8 d-flex justify-content-end">
+                <button class="btn btn-primary my-2 my-sm-0" type="submit">{ Save Options }</button>
+            </div>
         </div>
-        <div class="package" id="package1">
-            <h4>Pachet 1 - Alegeti optiunile in ordinea dorita!</h4>
+        <div class="row mt-2">
+            <div id="target" class="col-md-6">
+            </div>
+            <div id="source" class="col-md-6">
+            </div>
         </div>
-        <span class = "row" id="root1">  
-        </span>
-        <div class="package" id="package2">
-            <h4>Pachet 2 - Alegeti optiunile in ordinea dorita</h4>
-        </div>
-        <span class = "row" id="root2">  
-        </span>
-        <div class="package" id="package3">
-            <h4>Pachet 3 - Alegeti optiunile in ordinea dorita</h4>
-        </div>
-        <span class = "row" id="root3">  
-        </span>
-        <div class="package" id="package4">
-            <h4>Pachet 4 - Alegeti optiunile in ordinea dorita</h4>
-        </div>
-        <span class = "row" id="root4">  
-        </span>
-        <div class="package" id="package5">
-            <h4>Pachet 5 - Alegeti optiunile in ordinea dorita</h4>
-        </div>
-        <span class = "row" id="root5">  
-        </span>
     </div>
     <!-- Modal -->
     <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
@@ -87,7 +75,7 @@
                 </div>
                 <div class="modal-body">
                     <p>After confirmation this action can't be undone!</p>
-                    <p>You can see yout choices in <b>{ Assigned_Opt }</b> tab.</p>
+                    <p>You can see your choices in <b>{ Assigned_Opt }</b> tab.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="saveCourseChoice()">Confirm</button>
@@ -96,175 +84,59 @@
             </div>
         </div>
     </div>
-    <!-- Modal -->
-    <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="infoModalStatus"></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="infoModalMsg">
-                    <p></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="location.reload()">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
     <script>
-        function getCourses() {
-            var request = new XMLHttpRequest()
+        function onDragStart(event) {
+            event
+                .dataTransfer
+                .setData('text/plain', event.target.id);
 
-            request.open('GET', 'courses/get/' + search.value, true);
+            event
+                .currentTarget
+        }
 
-            request.onload = function() {
-                var data = JSON.parse(this.response)
+        function onDragOver(event) {
+            event.preventDefault();
+        }
 
-                document.getElementById('root1').innerHTML = ""
-                document.getElementById('root2').innerHTML = ""
-                document.getElementById('root3').innerHTML = ""
-                document.getElementById('root4').innerHTML = ""
-                document.getElementById('root5').innerHTML = ""
-
-                document.getElementById('package1').classList.add("hide")
-                document.getElementById('package2').classList.add("hide")
-                document.getElementById('package3').classList.add("hide")
-                document.getElementById('package4').classList.add("hide")
-                document.getElementById('package5').classList.add("hide")
-
-                if (request.status >= 200 && request.status < 400) {
-                    data.forEach(item => {
-                        console.log(item.package)
-                        switch (item.package) {
-                            case '1':
-                                row = document.getElementById('root1')
-                                document.getElementById('package1').classList.remove("hide")
-                                break;
-                            case '2':
-                                row = document.getElementById('root2')         
-                                document.getElementById('package2').classList.remove("hide")                       
-                                break;
-                            case '3':
-                                row = document.getElementById('root3')        
-                                document.getElementById('package3').classList.remove("hide")                        
-                                break;
-                            case '4':
-                                row = document.getElementById('root4')                   
-                                document.getElementById('package4').classList.remove("hide")             
-                                break;
-                            case '5':
-                                row = document.getElementById('root5')                 
-                                document.getElementById('package5').classList.remove("hide")               
-                                break;                        
-                            default:
-                                break;
-                        }
-                        const col = document.createElement('div')
-                        col.setAttribute('class', 'col-sm card-align')
-
-                        row.appendChild(col)
-
-                        const card = document.createElement('div')
-                        card.setAttribute('class', 'card center')
-
-                        col.appendChild(card)
-
-                        const card_body = document.createElement('div')
-                        card_body.setAttribute('class', 'card-body')
-
-                        card.appendChild(card_body)
-
-                        const content = document.createElement('div')
-                        content.setAttribute('class', 'container')
-
-                        card_body.appendChild(content)
-
-                        const h5 = document.createElement('h5')
-                        h5.setAttribute('class', 'card-title')
-                        h5.textContent = item.name                    
-
-                        content.appendChild(h5)
-
-                        const p1 = document.createElement('p')
-                        p1.setAttribute('class', 'card-text')                    
-                        p1.innerHTML ="<b>Professors:<br></b>" + item.professor_1
-
-                        content.appendChild(p1)
-
-                        const p2 = document.createElement('p')
-                        p2.setAttribute('class', 'card-text')
-                        if (item.professor_2) {
-                            p2.innerHTML = item.professor_2                            
-                        } else {
-                            p2.innerHTML = "<br>"
-                        }              
-
-                        content.appendChild(p2)
-
-                        const p3 = document.createElement('p')
-                        p3.setAttribute('class', 'card-text-small')                    
-                        p3.innerHTML = "<b>Year:</b> " + item.year
-
-                        content.appendChild(p3)
-
-                        const p4 = document.createElement('p')
-                        p4.setAttribute('class', 'card-text-small')                    
-                        p4.innerHTML = "<b>Package:</b> " + item.package
-
-                        content.appendChild(p4)
-
-                        const container = document.createElement('div')
-                        container.setAttribute('class', 'container')
-
-                        card_body.appendChild(container)
-
-                        const btn1 = document.createElement('a')
-                        btn1.setAttribute('href', item.link)
-                        btn1.setAttribute('class', 'btn btn-info btn-card')
-                        btn1.textContent = '{ Fisa Disciplinei }'
-
-                        container.appendChild(btn1)
-
-                        const btn2 = document.createElement('a')
-                        btn2.setAttribute('class', 'btn btn-card btn-success')
-                        btn2.setAttribute('id' , item.course_id)
-                        btn2.setAttribute('onclick', 'openConfirmationSetChoice(event)')
-                        btn2.textContent = '{ Alege }'
-                        
-                        container.appendChild(btn2)
-                    })
-                } else {
-                    console.log('error')
-                }
+        function onDrop(event) {
+            if (event.target !== event.currentTarget) {
+                return;
             }
-            request.send()
+            const id = event
+                .dataTransfer
+                .getData('text');
+            const draggableElement = document.getElementById(id);
+            const dropzone = event.target;
+            dropzone.appendChild(draggableElement);
+            event
+                .dataTransfer
+                .clearData();
         }
-        function openConfirmationSetChoice(e) {   
-            this.choice = e.target.id
-            $("#confirmModal").modal()            
-        }
-        function saveCourseChoice() {
-            var request = new XMLHttpRequest()
-            console.log(this.choice)
-            request.open('POST', 'choices/insert/' + this.choice, true)
-            request.onload = function() {
-                var data = JSON.parse(this.response) 
-                
-                $('#infoModal').modal()
-                document.getElementById("infoModalStatus").textContent = data.status + '!'
-                document.getElementById("infoModalMsg").textContent = data.msg
+
+        function onSingleDrop(event) {
+            if (event.target !== event.currentTarget) {
+                return;
             }
-            request.send()           
+            const id = event
+                .dataTransfer
+                .getData('text');
+            const draggableElement = document.getElementById(id);
+            const dropzone = event.target;
+            if (!dropzone.hasChildNodes()) {
+                dropzone.appendChild(draggableElement);
+                event
+                    .dataTransfer
+                    .clearData();
+
+            }
         }
+
         const capitalize = (s) => {
-            if (typeof s !== 'string') 
+            if (typeof s !== 'string')
                 return ''
             return s.charAt(0).toUpperCase() + s.slice(1)
         }
+
         function displayUsername() {
             var request = new XMLHttpRequest()
 
@@ -274,18 +146,164 @@
                 if (request.status >= 200 && request.status < 400) {
                     var data = JSON.parse(this.response)
                     username = document.getElementById('username')
-                    console.log(data)
                     stud_name = data.split('.')
-                    username.innerHTML =   '<b>' + capitalize(stud_name[0]) + ' ' + capitalize(stud_name[1]) + '</b>' 
+                    username.innerHTML = '<b>' + capitalize(stud_name[0]) + ' ' + capitalize(stud_name[1]) + '</b>'
                 } else {
-                    console.log('error')
+                    console.log('Error when getting logged user')
                 }
             }
             request.send()
         }
+
+        function getCourses() {
+            var request = new XMLHttpRequest()
+
+            request.open('GET', 'courses/get', true);
+
+            request.onload = function() {
+                var data = JSON.parse(this.response);
+                const source = document.getElementById("source");
+                const target = document.getElementById("target");
+                const select = document.getElementById("package-select");
+
+                if (request.status >= 200 && request.status < 400) {
+
+                    var packages = data.map(item => item.package)
+                        .filter((value, index, self) => self.indexOf(value) === index)
+
+                    packages.forEach(package => {
+
+                        const target_div = document.createElement('div');
+                        target_div.setAttribute('id', 'target-package-' + package);
+                        target_div.setAttribute('class', 'card my-3');
+
+                        target.appendChild(target_div);
+
+                        const target_header = document.createElement('div');
+                        target_header.setAttribute('id', 'target-header-package-' + package);
+                        target_header.setAttribute('class', 'card-header');
+                        target_header.innerHTML = 'Optiuni in ordinea preferintelor';
+
+                        target_div.appendChild(target_header);
+
+                        const target_body = document.createElement('div');
+                        target_body.setAttribute('id', 'target-body-package-' + package);
+                        target_body.setAttribute('class', 'card-body min-vh-26 d-flex flex-column');
+
+                        target_div.appendChild(target_body);
+
+                        const source_div = document.createElement('div');
+                        source_div.setAttribute('id', 'source-package-' + package);
+                        source_div.setAttribute('class', 'card my-3');
+
+                        source.appendChild(source_div);
+
+                        const source_header = document.createElement('div');
+                        source_header.setAttribute('id', 'source-header-package-' + package);
+                        source_header.setAttribute('class', 'card-header');
+                        source_header.innerHTML = 'Cursuri disponibile in acest pachet';
+
+                        source_div.appendChild(source_header);
+
+                        const source_body = document.createElement('div');
+                        source_body.setAttribute('id', 'source-body-package-' + package);
+                        source_body.setAttribute('class', 'card-body min-vh-26 d-flex flex-column');
+                        source_body.setAttribute('ondragover', 'onDragOver(event)');
+                        source_body.setAttribute('ondrop', 'onDrop(event)');
+
+                        source_div.appendChild(source_body);
+
+                        const option = document.createElement('option');
+                        if (package == 1) {
+                            option.setAttribute('selected', 'selected');
+                        }
+                        option.setAttribute('value', package);
+                        option.innerHTML = 'Package ' + package;
+
+                        select.appendChild(option);
+                    })
+
+                    packages.forEach(package => {
+                        var i = 0;
+                        data.forEach(item => {
+                            if (item.package == package) {
+                                i++;
+                                const target_parent = document.getElementById('target-body-package-' + package);
+                                const source_parent = document.getElementById('source-body-package-' + package);
+
+                                const target_div = document.createElement('div');
+                                target_div.setAttribute('class', 'card my-3');
+                                target_div.setAttribute('id', 'p' + package + 'o' + i)
+
+                                target_parent.appendChild(target_div);
+
+                                const target_header = document.createElement('div');
+                                target_header.setAttribute('id', 'header-option-' + i);
+                                target_header.setAttribute('class', 'card-header');
+                                target_header.innerHTML = 'Optiunea ' + i;
+
+                                target_div.appendChild(target_header);
+
+                                const target_body = document.createElement('div');
+                                target_body.setAttribute('id', 'body-option-' + i);
+                                target_body.setAttribute('class', 'card-body d-flex flex-column');
+                                target_body.setAttribute('ondragover', 'onDragOver(event);');
+                                target_body.setAttribute('ondrop', 'onSingleDrop(event)');
+
+                                target_div.appendChild(target_body);
+
+                                const source_div = document.createElement('div');
+                                source_div.setAttribute('class', 'list-group-item');
+                                source_div.setAttribute('id', item.course_id);
+                                source_div.setAttribute('draggable', 'true');
+                                source_div.setAttribute('ondragstart', 'onDragStart(event)');
+                                source_div.innerHTML = item.name;
+
+                                source_parent.appendChild(source_div);
+
+                            }
+                        })
+                    })
+
+                    document.getElementById('source-package-2').hidden = true;
+                    document.getElementById('source-package-3').hidden = true;
+                    document.getElementById('source-package-4').hidden = true;
+                    document.getElementById('source-package-5').hidden = true;
+
+                    document.getElementById('target-package-2').hidden = true;
+                    document.getElementById('target-package-3').hidden = true;
+                    document.getElementById('target-package-4').hidden = true;
+                    document.getElementById('target-package-5').hidden = true;
+                } else {
+                    console.log('Error when getting courses')
+                }
+            }
+            request.send()
+        }
+
+        function changePackage() {
+            selectedPackage = document.getElementById('package-select').value;
+            //Hide All Sources
+            document.getElementById('source-package-1').hidden = true;
+            document.getElementById('source-package-2').hidden = true;
+            document.getElementById('source-package-3').hidden = true;
+            document.getElementById('source-package-4').hidden = true;
+            document.getElementById('source-package-5').hidden = true;
+            //Hide All Targets
+            document.getElementById('target-package-1').hidden = true;
+            document.getElementById('target-package-2').hidden = true;
+            document.getElementById('target-package-3').hidden = true;
+            document.getElementById('target-package-4').hidden = true;
+            document.getElementById('target-package-5').hidden = true;
+            //Display source and target for slected package only
+            document.getElementById('source-package-' + selectedPackage).hidden = false;
+            document.getElementById('target-package-' + selectedPackage).hidden = false;
+        }
     </script>
+
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
+
 </html>

@@ -50,10 +50,8 @@
             <table class="table table-striped table-light table-container table-hover">
                 <thead>
                     <tr>
-                        <th scope="col">Priority</th>
                         <th scope="col">Name</th>
-                        <th scope="col">Professor 1</th>
-                        <th scope="col">Professor 2</th>
+                        <th scope="col">Professor</th>
                         <th scope="col">Year</th>
                         <th scope="col">Package</th>
                         <th scope="col">Status</th>
@@ -72,8 +70,7 @@
                 <thead>
                     <tr>
                         <th scope="col">Name</th>
-                        <th scope="col">Professor 1</th>
-                        <th scope="col">Professor 2</th>
+                        <th scope="col">Professor</th>
                         <th scope="col">Year</th>
                         <th scope="col">Package</th>
                         <th scope="col">Status</th>
@@ -103,12 +100,6 @@
                             const tr = document.createElement('tr')
                             row.appendChild(tr)
 
-                            const td0 = document.createElement('td')
-                            td0.setAttribute("class", "center-td")
-                            td0.innerText = item.priority
-
-                            tr.appendChild(td0)
-
                             const td1 = document.createElement('td')
                             td1.innerText = item.name
 
@@ -118,13 +109,6 @@
                             td2.innerText = item.professor_1
 
                             tr.appendChild(td2)
-
-                            const td3 = document.createElement('td')
-                            if (item.professor_2) {
-                                td3.innerText = item.professor_2                            
-                            }
-
-                            tr.appendChild(td3)
 
                             const td4 = document.createElement('td')
                             td4.setAttribute("class", "center-td")
@@ -176,13 +160,6 @@
                         td2.innerText = item.professor_1
 
                         tr.appendChild(td2)
-
-                        const td3 = document.createElement('td')
-                        if (item.professor_2) {
-                            td3.innerText = item.professor_2                            
-                        }
-
-                        tr.appendChild(td3)
 
                         const td4 = document.createElement('td')
                         td4.setAttribute("class", "center-td")

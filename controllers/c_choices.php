@@ -32,7 +32,7 @@ class choices {
                 $courses = new m_courses($db->conn);
             }
             //Get data
-            $result = $choices->getChoices($_SESSION["login_usr"]);   
+            $result = $choices->getPrioChoices($_SESSION["login_usr"]);   
             $rows = array();        
             //Fetch data in assoc array
             while( $row = $result->fetch_assoc()) {

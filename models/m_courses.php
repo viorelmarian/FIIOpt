@@ -12,16 +12,15 @@ class m_courses {
         $stmt->execute();
         return $stmt->get_result();  
     }
-    function getCourses($src) {
+    function getCourses() {
         $stmt = $this->conn->prepare("  SELECT      `username`, `course_id`, `name`, `courses`.`year`, `package`, `link` 
                                         FROM        `courses` 
-                                        JOIN        `students`  ON `courses`.`year` = `students`.`year` 
-                                        WHERE       `name`      LIKE ? 
-                                        AND         `courses`.`course_id` NOT IN ( SELECT `course_id` FROM `choices` WHERE `student_id` = ? )
+                                        JOIN        `students`  ON `courses`.`year` = `students`.`year`
+                                        WHERE       `courses`.`course_id` NOT IN ( SELECT `course_id` FROM `choices` WHERE `student_id` = ? )
                                         AND         `student_id` = ?
                                         ORDER BY    `year`, `package`, `name` ASC");
-        $src = '%' . $src . '%';
-        $stmt->bind_param("sss", $src, $_SESSION["login_usr"], $_SESSION["login_usr"]);
+
+        $stmt->bind_param("ss", $_SESSION["login_usr"], $_SESSION["login_usr"]);
         $stmt->execute();
         return $stmt->get_result();    
     }

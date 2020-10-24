@@ -1,10 +1,13 @@
 <?php
-class m_choices {
+class m_choices
+{
     private $conn;
-    function m_choices($conn) {
+    function m_choices($conn)
+    {
         $this->conn = $conn;
-    }   
-    function insert($course) {        
+    }
+    function insert($course)
+    {
         $stmt = $this->conn->prepare("SELECT COUNT(*)   FROM    `choices` 
                                                         JOIN    `courses`               ON `choices`.`course_id` = `courses`.`course_id` 
                                                         WHERE   `courses`.`package`     IN (
@@ -23,12 +26,12 @@ class m_choices {
         $priority = $stmt->get_result()->fetch_assoc()["COUNT(*)"] + 1;
 
         $stmt = $this->conn->prepare("INSERT    INTO    `choices`(`choice_id`, `student_id`, `course_id`, `priority`, `status`) 
-                                                VALUES  (?, ?, ?, ? ,?)");        
+                                                VALUES  (?, ?, ?, ? ,?)");
         $status = "Pending";
-        $choice_id = sha1(microtime(true).mt_rand(10000,90000));
+        $choice_id = sha1(microtime(true) . mt_rand(10000, 90000));
         $stmt->bind_param("sssis", $choice_id, $_SESSION["login_usr"], $course, $priority, $status);
         $stmt->execute();
-        return $stmt->get_result(); 
+        return $stmt->get_result();
     }
     // function validateChoice($courseId) {
     //     $stmt = $this->conn->prepare("SELECT COUNT(*)   FROM    `choices` 
@@ -47,7 +50,8 @@ class m_choices {
     //     $stmt->execute();
     //     return $stmt->get_result();
     // }
-    function getChoices($user) {
+    function getAllChoices($user)
+    {
         $stmt = $this->conn->prepare("  SELECT      `name`,
                                                     `priority`, 
                                                     `package`, 
@@ -61,6 +65,27 @@ class m_choices {
                                         WHERE       `st`.`student_id`  = ?
                                         ORDER BY    `package`, `priority`, `year`, `name`");
         $stmt->bind_param("s", $user);
+        $stmt->execute();
+        return $stmt->get_result();
+    }
+
+    function getPrioChoices($user)
+    {
+        $stmt = $this->conn->prepare("  SELECT      `name`,
+                                                    `priority`, 
+                                                    `package`, 
+                                                    `status`,
+                                                    `username`,
+                                                    `co`.`year`, 
+                                                    `co`.`course_id`    
+                                        FROM        `choices`   AS  `ch` 
+                                        JOIN        `courses`   AS  `co`    ON `ch`.`course_id`  = `co`.`course_id` 
+                                        JOIN        `students`  AS  `st`    ON `ch`.`student_id` = `st`.`student_id`
+                                        WHERE       `st`.`student_id`  = ?
+                                        AND         `ch`.`priority` = ?
+                                        ORDER BY    `package`, `priority`, `year`, `name`");
+        $priority = "1";
+        $stmt->bind_param("ss", $user, $priority);
         $stmt->execute();
         return $stmt->get_result();
     }

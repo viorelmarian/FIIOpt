@@ -151,7 +151,7 @@ class courses {
             require_once "../views/v_login.php";
         }
     }
-    function get($src) {        
+    function get() {        
         //If logged in
         if (isset($_SESSION["logged"]) || isset($_SESSION["logged_adm"])) {
             //If db connection does not exist
@@ -166,7 +166,7 @@ class courses {
                 $courses = new m_courses($db->conn);
             }
             //Get data
-            $result = $courses->getCourses($src);    
+            $result = $courses->getCourses();    
             $rows = array();        
             //Fetch data in assoc array
             while($row = $result->fetch_assoc()) {                
@@ -423,7 +423,7 @@ class courses {
             $student_choices = array();
             foreach ($students as $student) {
                 $student_choices = array();
-                $result = $choices->getChoices($student["student_id"]);
+                $result = $choices->getAllChoices($student["student_id"]);
                 while($row = $result->fetch_assoc()) {
                     foreach($row as $key => $value) {
                         //Encode each value of the row in utf8
