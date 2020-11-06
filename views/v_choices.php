@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <base href="/">
     <meta charset="UTF-8">
@@ -11,10 +12,11 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
     <title>{ FII_Opt } - Home</title>
 </head>
+
 <body onload="getChoices(), getAssignations(), displayUsername()">
-    <div class = "screen_page"></div>
+    <div class="screen_page"></div>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class = "container">
+        <div class="container">
             <a class="navbar-brand" href="/">
                 <img src="../assets/pictures/banner.png" alt="" width="100px">
             </a>
@@ -26,25 +28,25 @@
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="/courses/display">{ Choose_Opt }</a>
-                    </li> 
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/choices/display">{ Assigned_Opt }</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/trades/display">{ Trade_Opt }</a>
-                    </li>  
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/notifications/display">{ Notifications }</a>
-                    </li>  
+                    </li>
                 </ul>
                 <form class="form-inline my-2 my-lg-0" action="/users/logout/usr" method="post">
                     <div id="username" class="username" style="color:white; margin-right:10px"></div>
                     <button class="btn btn-primary my-2 my-sm-0" type="submit">{ Logout }</button>
                 </form>
             </div>
-        </div>            
+        </div>
     </nav>
-    <div class = "container aligner">
+    <div class="container aligner">
         <div class="table-responsive table-container">
             <h1 style="color:white">Chosen Courses</h1>
             <table class="table table-striped table-light table-container table-hover">
@@ -58,12 +60,12 @@
                     </tr>
                 </thead>
                 <tbody id="root-choices">
-                    
+
                 </tbody>
             </table>
-        </div>        
+        </div>
     </div>
-    <div class = "container aligner">
+    <div class="container aligner">
         <div class="table-responsive table-container">
             <h1 style="color:white">Assigned Courses</h1>
             <table class="table table-striped table-light table-container table-hover">
@@ -77,24 +79,23 @@
                     </tr>
                 </thead>
                 <tbody id="root-assignations">
-                    
+
                 </tbody>
             </table>
-        </div>        
+        </div>
     </div>
     <script>
-        function getChoices(){
-            var request = new XMLHttpRequest()
+        function getChoices() {
+            $(function() {
+                $.ajax({
+                    type: "GET",
+                    url: "choices/get",
+                    success: function(response) {
+                        var data = JSON.parse(response);
 
-            request.open('GET', 'choices/get', true);
+                        const row = document.getElementById('root-choices')
+                        row.innerHTML = "";
 
-            request.onload = function() {
-                    var data = JSON.parse(this.response)
-
-                    const row = document.getElementById('root-choices')
-                    row.innerHTML = "";
-
-                    if (request.status >= 200 && request.status < 400) {
                         data.forEach(item => {
 
                             const tr = document.createElement('tr')
@@ -116,7 +117,7 @@
 
                             tr.appendChild(td4)
 
-                            const td5 = document.createElement('td')                            
+                            const td5 = document.createElement('td')
                             td5.setAttribute("class", "center-td")
                             td5.innerText = item.package
 
@@ -127,92 +128,85 @@
 
                             tr.appendChild(td6)
                         })
-                    } else {
-                        console.log('error')
                     }
-                }
-            request.send()
+                })
+            })
         }
-       
+
         function getAssignations() {
-            var request = new XMLHttpRequest()
+            $(function() {
+                $.ajax({
+                    type: "GET",
+                    url: "assignations/get/display",
+                    success: function(response) {
+                        var data = JSON.parse(response);
 
-            request.open('GET', 'assignations/get/display', true);
+                        const row = document.getElementById('root-assignations')
+                        row.innerHTML = "";
 
-            request.onload = function() {
-                var data = JSON.parse(this.response)
+                        data.forEach(item => {
 
-                const row = document.getElementById('root-assignations')
-                row.innerHTML = "";
+                            const tr = document.createElement('tr')
+                            row.appendChild(tr)
 
-                if (request.status >= 200 && request.status < 400) {
-                    data.forEach(item => {
+                            const td1 = document.createElement('td')
+                            td1.innerText = item.name
 
-                        const tr = document.createElement('tr')
-                        row.appendChild(tr)
+                            tr.appendChild(td1)
 
-                        const td1 = document.createElement('td')
-                        td1.innerText = item.name
+                            const td2 = document.createElement('td')
+                            td2.innerText = item.professor_1
 
-                        tr.appendChild(td1)
+                            tr.appendChild(td2)
 
-                        const td2 = document.createElement('td')
-                        td2.innerText = item.professor_1
+                            const td4 = document.createElement('td')
+                            td4.setAttribute("class", "center-td")
+                            td4.innerText = item.year
 
-                        tr.appendChild(td2)
+                            tr.appendChild(td4)
 
-                        const td4 = document.createElement('td')
-                        td4.setAttribute("class", "center-td")
-                        td4.innerText = item.year
+                            const td5 = document.createElement('td')
+                            td5.setAttribute("class", "center-td")
+                            td5.innerText = item.package
 
-                        tr.appendChild(td4)
+                            tr.appendChild(td5)
 
-                        const td5 = document.createElement('td')
-                        td5.setAttribute("class", "center-td")
-                        td5.innerText = item.package
+                            const td6 = document.createElement('td')
+                            td6.innerText = item.status
 
-                        tr.appendChild(td5)
+                            tr.appendChild(td6)
+                        })
+                    }
+                })
+            })
+        }
 
-                        const td6 = document.createElement('td')
-                        td6.innerText = item.status
-
-                        tr.appendChild(td6)
-                    })
-                } else {
-                    console.log('error')
-                }
-            }
-            request.send()
-        }       
-        
         const capitalize = (s) => {
-        if (typeof s !== 'string') 
-            return ''
-        return s.charAt(0).toUpperCase() + s.slice(1)
+            if (typeof s !== 'string')
+                return ''
+            return s.charAt(0).toUpperCase() + s.slice(1)
         }
 
         function displayUsername() {
-            var request = new XMLHttpRequest()
+            $(function() {
+                $.ajax({
+                    type: "GET",
+                    url: "users/getLoggedUser",
+                    success: function(response) {
+                        var data = JSON.parse(response);
 
-            request.open('GET', 'users/getLoggedUser', true);
+                        username = document.getElementById('username')
 
-            request.onload = function() {
-                if (request.status >= 200 && request.status < 400) {
-                    var data = JSON.parse(this.response)
-                    username = document.getElementById('username')
-                    console.log(data)
-                    stud_name = data.split('.')
-                    username.innerHTML =   '<b>' + capitalize(stud_name[0]) + ' ' + capitalize(stud_name[1]) + '</b>' 
-                } else {
-                    console.log('error')
-                }
-            }
-            request.send()
+                        stud_name = data.split('.')
+                        username.innerHTML = '<b>' + capitalize(stud_name[0]) + ' ' + capitalize(stud_name[1]) + '</b>'
+                    }
+                })
+            })
         }
-            
     </script>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
+
 </html>

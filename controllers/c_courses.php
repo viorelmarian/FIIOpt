@@ -2,22 +2,32 @@
 require_once "../shared/db_conn.php";
 require_once "../models/m_courses.php";
 
-class courses {    
-    function display() {
+class courses
+{
+    function isAjax()
+    {
+        $headers = apache_request_headers();
+        $is_ajax = (isset($headers['X-Requested-With']) && $headers['X-Requested-With'] == 'XMLHttpRequest');
+        return $is_ajax;
+    }
+
+    function display()
+    {
         //If logged in
         if (isset($_SESSION["logged"])) {
             //Allow access
-            require_once "../views/v_courses.php";            
+            require_once "../views/v_courses.php";
         } else {
             //Redirect accordingly
             require_once "../views/v_login.php";
         }
     }
-    function getAllCourses() {
+    function getAllCourses()
+    {
         //If logged in
         if (isset($_SESSION["logged"]) || isset($_SESSION["logged_adm"])) {
             //If db connection does not exist
-            if(!isset($db)) {
+            if (!isset($db)) {
                 //Create db connection
                 $db = new database_conn;
                 $db->connect();
@@ -28,16 +38,16 @@ class courses {
                 $courses = new m_courses($db->conn);
             }
             //Get data
-            $result = $courses->get();    
-            $rows = array();        
+            $result = $courses->get();
+            $rows = array();
             //Fetch data in assoc array
-            while($row = $result->fetch_assoc()) {
-                foreach($row as $key => $value) {
+            while ($row = $result->fetch_assoc()) {
+                foreach ($row as $key => $value) {
                     //Encode each value of the row in utf8
                     $row[$key] = utf8_encode($value);
                 }
-            //Add rows in Array
-            $rows[] = $row;
+                //Add rows in Array
+                $rows[] = $row;
             }
             //Encode in JSON Format and return
             echo json_encode($rows);
@@ -46,11 +56,12 @@ class courses {
             require_once "../views/v_login.php";
         }
     }
-    function getStudyCycles() {
+    function getStudyCycles()
+    {
         //If logged in
         if (isset($_SESSION["logged"]) || isset($_SESSION["logged_adm"])) {
             //If db connection does not exist
-            if(!isset($db)) {
+            if (!isset($db)) {
                 //Create db connection
                 $db = new database_conn;
                 $db->connect();
@@ -61,16 +72,16 @@ class courses {
                 $courses = new m_courses($db->conn);
             }
             //Get data
-            $result = $courses->getStudyCycles();    
-            $rows = array();        
+            $result = $courses->getStudyCycles();
+            $rows = array();
             //Fetch data in assoc array
-            while($row = $result->fetch_assoc()) {
-                foreach($row as $key => $value) {
+            while ($row = $result->fetch_assoc()) {
+                foreach ($row as $key => $value) {
                     //Encode each value of the row in utf8
                     $row[$key] = utf8_encode($value);
                 }
-            //Add rows in Array
-            $rows[] = $row;
+                //Add rows in Array
+                $rows[] = $row;
             }
             //Encode in JSON Format and return
             echo json_encode($rows);
@@ -79,11 +90,12 @@ class courses {
             require_once "../views/v_login.php";
         }
     }
-    function getProfessors() {
+    function getProfessors()
+    {
         //If logged in
         if (isset($_SESSION["logged"]) || isset($_SESSION["logged_adm"])) {
             //If db connection does not exist
-            if(!isset($db)) {
+            if (!isset($db)) {
                 //Create db connection
                 $db = new database_conn;
                 $db->connect();
@@ -94,16 +106,16 @@ class courses {
                 $courses = new m_courses($db->conn);
             }
             //Get data
-            $result = $courses->getProfessors();    
-            $rows = array();        
+            $result = $courses->getProfessors();
+            $rows = array();
             //Fetch data in assoc array
-            while($row = $result->fetch_assoc()) {
-                foreach($row as $key => $value) {
+            while ($row = $result->fetch_assoc()) {
+                foreach ($row as $key => $value) {
                     //Encode each value of the row in utf8
                     $row[$key] = utf8_encode($value);
                 }
-            //Add rows in Array
-            $rows[] = $row;
+                //Add rows in Array
+                $rows[] = $row;
             }
             //Encode in JSON Format and return
             echo json_encode($rows);
@@ -112,11 +124,12 @@ class courses {
             require_once "../views/v_login.php";
         }
     }
-    function getById($courseId) {
+    function getById($courseId)
+    {
         //If logged in
         if (isset($_SESSION["logged"]) || isset($_SESSION["logged_adm"])) {
             //If db connection does not exist
-            if(!isset($db)) {
+            if (!isset($db)) {
                 //Create db connection
                 $db = new database_conn;
                 $db->connect();
@@ -127,22 +140,22 @@ class courses {
                 $courses = new m_courses($db->conn);
             }
             //Get data
-            $result = $courses->getById($courseId);    
-            $rows = array();    
-            while( $row = $result->fetch_assoc()) {
+            $result = $courses->getById($courseId);
+            $rows = array();
+            while ($row = $result->fetch_assoc()) {
                 //For each Course get the corresponding professors
                 $professors = $courses->getProfessorsByCourse($courseId);
                 //Add professors to the rest of the data
                 $i = 1;
-                while($professor = $professors->fetch_assoc()) {
+                while ($professor = $professors->fetch_assoc()) {
                     $row["professor_" . $i++] = $professor["professor_id"];
                 }
-                foreach($row as $key => $value) {
+                foreach ($row as $key => $value) {
                     //Encode each value of the row in utf8
                     $row[$key] = utf8_encode($value);
                 }
-            //Add rows to Array
-            $rows[] = $row;
+                //Add rows to Array
+                $rows[] = $row;
             }
             //Encode in JSON Format and return
             echo json_encode($rows);
@@ -151,52 +164,64 @@ class courses {
             require_once "../views/v_login.php";
         }
     }
-    function get() {        
-        //If logged in
-        if (isset($_SESSION["logged"]) || isset($_SESSION["logged_adm"])) {
-            //If db connection does not exist
-            if(!isset($db)) {
-                //Create db connection
-                $db = new database_conn;
-                $db->connect();
-            }
-            //If model instance does not exist
-            if (!isset($courses)) {
-                //Create model instance
-                $courses = new m_courses($db->conn);
-            }
-            //Get data
-            $result = $courses->getCourses();    
-            $rows = array();        
-            //Fetch data in assoc array
-            while($row = $result->fetch_assoc()) {                
-                //For each Course get the corresponding professors
-                $professors = $courses->getProfessorsByCourse($row["course_id"]);
-                //Add professors to the rest of the data
-                $i = 1;
-                while($professor = $professors->fetch_assoc()) {
-                    $row["professor_" . $i++] = $professor["title"] . " " . $professor["l_name"] . " " . $professor["f_name"];
+    function get()
+    {
+        if ($this->isAjax()) {
+            //If logged in
+            if (isset($_SESSION["logged"]) || isset($_SESSION["logged_adm"])) {
+                //If db connection does not exist
+                if (!isset($db)) {
+                    //Create db connection
+                    $db = new database_conn;
+                    $db->connect();
                 }
-                foreach($row as $key => $value) {
-                    //Encode each value of the row in utf8
-                    $row[$key] = utf8_encode($value);
+                //If model instance does not exist
+                if (!isset($courses)) {
+                    //Create model instance
+                    $courses = new m_courses($db->conn);
                 }
-            //Add rows in Array
-            $rows[] = $row;
+                //Get data
+                $result = $courses->getCourses();
+                $rows = array();
+                //Fetch data in assoc array
+                while ($row = $result->fetch_assoc()) {
+                    //For each Course get the corresponding professors
+                    $professors = $courses->getProfessorsByCourse($row["course_id"]);
+                    //Add professors to the rest of the data
+                    $i = 1;
+                    while ($professor = $professors->fetch_assoc()) {
+                        $row["professor_" . $i++] = $professor["title"] . " " . $professor["l_name"] . " " . $professor["f_name"];
+                    }
+                    foreach ($row as $key => $value) {
+                        //Encode each value of the row in utf8
+                        $row[$key] = utf8_encode($value);
+                    }
+                    //Add rows in Array
+                    $rows[] = $row;
+                }
+                //Encode in JSON Format and return
+                if ($rows) {
+                    echo json_encode($rows);
+                } else {
+                    header('HTTP/1.1 218 Internal Server Error');
+                    header('Content-Type: application/json; charset=UTF-8');
+                    die();
+                }
+            } else {
+                //Redirect accordingly
+                require_once "../views/v_login.php";
             }
-            //Encode in JSON Format and return
-            echo json_encode($rows);
         } else {
-            //Redirect accordingly
-            require_once "../views/v_login.php";
+            die(header("HTTP/1.1 404 Not Found"));
         }
     }
 
-    function saveCourse($data) {
+    function saveCourse($data)
+    {
         //If logged in
         if (isset($_SESSION["logged_adm"])) {
             //If db connection does not exist
-            if(!isset($db)) {
+            if (!isset($db)) {
                 //Create db connection
                 $db = new database_conn;
                 $db->connect();
@@ -212,27 +237,31 @@ class courses {
                 ${$key_value[0]} = urldecode($key_value[1]);
             }
             //Get data
-            if($id == "Choose a course") {
-                $result = $courses->insert($name,$year,$package,$cycle,$link,$professor1,$professor2,$no_studs); 
+            if ($id == "Choose a course") {
+                $result = $courses->insert($name, $year, $package, $cycle, $link, $professor1, $professor2, $no_studs);
                 if ($result) {
-                    $response = array(  "status"=>"Success",
-                                        "msg" => "Course inserted successfully!"
-                                    );
+                    $response = array(
+                        "status" => "Success",
+                        "msg" => "Course inserted successfully!"
+                    );
                 } else {
-                    $response = array(  "status"=>"Error",
-                                        "msg" => "Course already exists!"
-                                    );
+                    $response = array(
+                        "status" => "Error",
+                        "msg" => "Course already exists!"
+                    );
                 }
             } else {
-                $result = $courses->update($id,$name,$year,$package,$cycle,$link,$professor1,$professor2,$no_studs); 
+                $result = $courses->update($id, $name, $year, $package, $cycle, $link, $professor1, $professor2, $no_studs);
                 if ($result) {
-                    $response = array(  "status"=>"Success",
-                                        "msg" => "Course updated successfully!"
-                                    );
+                    $response = array(
+                        "status" => "Success",
+                        "msg" => "Course updated successfully!"
+                    );
                 } else {
-                    $response = array(  "status"=>"Error",
-                                        "msg" => "Course could not be updated!"
-                                    );
+                    $response = array(
+                        "status" => "Error",
+                        "msg" => "Course could not be updated!"
+                    );
                 }
             }
             //Encode in JSON Format and return
@@ -243,11 +272,12 @@ class courses {
         }
     }
 
-    function saveProfessor($data) {
+    function saveProfessor($data)
+    {
         //If logged in
         if (isset($_SESSION["logged_adm"])) {
             //If db connection does not exist
-            if(!isset($db)) {
+            if (!isset($db)) {
                 //Create db connection
                 $db = new database_conn;
                 $db->connect();
@@ -263,27 +293,31 @@ class courses {
                 ${$key_value[0]} = urldecode($key_value[1]);
             }
             //Get data
-            if($id == "Choose a professor") {
-                $result = $courses->insertProfessor($title,$l_name,$f_name); 
+            if ($id == "Choose a professor") {
+                $result = $courses->insertProfessor($title, $l_name, $f_name);
                 if ($result) {
-                    $response = array(  "status"=>"Success",
-                                        "msg" => "Professor inserted successfully!"
-                                    );
+                    $response = array(
+                        "status" => "Success",
+                        "msg" => "Professor inserted successfully!"
+                    );
                 } else {
-                    $response = array(  "status"=>"Error",
-                                        "msg" => "Professor already exists!"
-                                    );
+                    $response = array(
+                        "status" => "Error",
+                        "msg" => "Professor already exists!"
+                    );
                 }
             } else {
-                $result = $courses->updateProfessor($id,$title,$l_name,$f_name); 
+                $result = $courses->updateProfessor($id, $title, $l_name, $f_name);
                 if ($result) {
-                    $response = array(  "status"=>"Success",
-                                        "msg" => "Professor updated successfully!"
-                                    );
+                    $response = array(
+                        "status" => "Success",
+                        "msg" => "Professor updated successfully!"
+                    );
                 } else {
-                    $response = array(  "status"=>"Error",
-                                        "msg" => "Professor could not be updated!"
-                                    );
+                    $response = array(
+                        "status" => "Error",
+                        "msg" => "Professor could not be updated!"
+                    );
                 }
             }
             //Encode in JSON Format and return
@@ -294,11 +328,12 @@ class courses {
         }
     }
 
-    function deleteCourse($courseId) {
+    function deleteCourse($courseId)
+    {
         //If logged in
         if (isset($_SESSION["logged_adm"])) {
             //If db connection does not exist
-            if(!isset($db)) {
+            if (!isset($db)) {
                 //Create db connection
                 $db = new database_conn;
                 $db->connect();
@@ -310,9 +345,10 @@ class courses {
             }
             $courses->delete($courseId);
 
-            $response = array(  "status"=>"Success",
-                                        "msg" => "Course deleted successfully!"
-                        );
+            $response = array(
+                "status" => "Success",
+                "msg" => "Course deleted successfully!"
+            );
             //Encode in JSON Format and return
             echo json_encode($response);
         } else {
@@ -321,11 +357,12 @@ class courses {
         }
     }
 
-    function deleteProfessor($professorId) {
+    function deleteProfessor($professorId)
+    {
         //If logged in
         if (isset($_SESSION["logged_adm"])) {
             //If db connection does not exist
-            if(!isset($db)) {
+            if (!isset($db)) {
                 //Create db connection
                 $db = new database_conn;
                 $db->connect();
@@ -337,9 +374,10 @@ class courses {
             }
             $courses->deleteProfessor($professorId);
 
-            $response = array(  "status"=>"Success",
-                                        "msg" => "Professor deleted successfully!"
-                        );
+            $response = array(
+                "status" => "Success",
+                "msg" => "Professor deleted successfully!"
+            );
             //Encode in JSON Format and return
             echo json_encode($response);
         } else {
@@ -348,11 +386,12 @@ class courses {
         }
     }
 
-    function getProfessorById($professorId){
+    function getProfessorById($professorId)
+    {
         //If logged in
         if (isset($_SESSION["logged_adm"])) {
             //If db connection does not exist
-            if(!isset($db)) {
+            if (!isset($db)) {
                 //Create db connection
                 $db = new database_conn;
                 $db->connect();
@@ -365,9 +404,9 @@ class courses {
             $courses->getProfessorById($professorId);
 
             $result = $courses->getProfessorById($professorId);
-            $rows = array();    
-            while( $row = $result->fetch_assoc()) {
-                foreach($row as $key => $value) {
+            $rows = array();
+            while ($row = $result->fetch_assoc()) {
+                foreach ($row as $key => $value) {
                     //Encode each value of the row in utf8
                     $row[$key] = utf8_encode($value);
                 }
@@ -382,11 +421,12 @@ class courses {
         }
     }
 
-    function assignCourses() {
-         //If logged in
-         if (isset($_SESSION["logged_adm"])) {
+    function assignCourses()
+    {
+        //If logged in
+        if (isset($_SESSION["logged_adm"])) {
             //If db connection does not exist
-            if(!isset($db)) {
+            if (!isset($db)) {
                 //Create db connection
                 $db = new database_conn;
                 $db->connect();
@@ -412,8 +452,8 @@ class courses {
                 $users = new m_users($db->conn);
             }
             $result = $users->getAllStudentsIds();
-            while( $row = $result->fetch_assoc()) {
-                foreach($row as $key => $value) {
+            while ($row = $result->fetch_assoc()) {
+                foreach ($row as $key => $value) {
                     //Encode each value of the row in utf8
                     $row[$key] = utf8_encode($value);
                 }
@@ -424,8 +464,8 @@ class courses {
             foreach ($students as $student) {
                 $student_choices = array();
                 $result = $choices->getAllChoices($student["student_id"]);
-                while($row = $result->fetch_assoc()) {
-                    foreach($row as $key => $value) {
+                while ($row = $result->fetch_assoc()) {
+                    foreach ($row as $key => $value) {
                         //Encode each value of the row in utf8
                         $row[$key] = utf8_encode($value);
                     }
@@ -442,12 +482,10 @@ class courses {
                     }
                     $result = $assignations->validateChoice($choice["course_id"], $student["student_id"]);
                 }
-                
-            }            
+            }
         } else {
             //Redirect accordingly
             require_once "../views/v_login.php";
         }
     }
 }
-?>
