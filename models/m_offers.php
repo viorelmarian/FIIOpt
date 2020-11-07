@@ -28,7 +28,7 @@ class m_offers {
     }
     function determineTradeOffer($tradeId) {
         $stmt = $this->conn->prepare("  SELECT  `courses`.`course_id`, 
-                                                `name`   
+                                                `courses`.`name`   
                                         FROM    `assigned_courses` 
                                         JOIN    `courses`   ON `assigned_courses`.`course_id` = `courses`.`course_id` 
                                         WHERE   `courses`.`package` IN (

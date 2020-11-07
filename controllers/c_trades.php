@@ -531,7 +531,7 @@ class trades {
             if (!isset($notifications)) {
                 $notifications = new notifications;
             }
-            $notifications->sendEmailDeclineTraansferRequest($transferId);
+            $notifications->sendEmailDeclineTransferRequest($transferId);
             $response = array(  
                 "status"=>"Success",
                 "msg" => "Transfer declined successfully!"

@@ -85,7 +85,7 @@ class notifications {
             require_once "../views/v_login.php";
         }
     }
-    function sendEmailDeclineTradeOffer() {
+    function sendEmailDeclineTradeOffer($offerId) {
         if (isset($_SESSION["logged"])) {
             //If db connection does not exist
             if(!isset($db)) {
@@ -146,7 +146,7 @@ class notifications {
         $subject = "FIIOpt Notification";
         mail($recipient,$subject,$message);        
     }
-    function sendEmailDeclineTraansferRequest($tradeId) {
+    function sendEmailDeclineTransferRequest($transferId) {
         //If db connection does not exist
         if(!isset($db)) {
             //Create db connection

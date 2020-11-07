@@ -157,7 +157,6 @@ body {
 }
 
 .columns {
-    margin-top: 20px;
     border-radius: 5px;
     width: 100%;
     display: flex;
@@ -253,4 +252,47 @@ a {
 
 .min-h-100 {
     min-width: 100%;
+}
+
+.full-height-body {
+    display: flex;
+    flex-flow: column;
+    min-height: 100%;
+}
+
+.full-height-content {
+    display: flex;
+    flex: 1 1 auto;
+}
+
+.loader {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    width: 75px;
+    height: 75px;
+    -webkit-animation: spin 2s linear infinite;
+    /* Safari */
+    animation: spin 2s linear infinite;
+}
+
+
+/* Safari */
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
