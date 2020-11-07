@@ -67,7 +67,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div id="loading-image" class="d-flex justify-content-center mt-5">
+                <div id="loading-image" class="mt-5" style="margin: auto;">
                     <div class="loader"></div>
                 </div>
                 <div class="modal-body" id="infoModalMsg">

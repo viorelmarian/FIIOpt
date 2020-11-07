@@ -133,6 +133,9 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
+                <div id="loading-image" class="mt-5" style="margin: auto;">
+                    <div class="loader"></div>
+                </div>
                 <div class="modal-body" id="infoModalMsg">
                     <p></p>
                 </div>

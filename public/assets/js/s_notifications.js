@@ -70,7 +70,9 @@ function acceptTrade(e) {
 function declineTrade(e) {
     this.choice = e.target.id
     var choice = this.choice
-
+    $('#infoModal').modal()
+    document.getElementById("infoModalStatus").textContent = 'Pending...'
+    $('#loading-image').show();
     $(function() {
         $.ajax({
             type: "POST",
@@ -78,9 +80,11 @@ function declineTrade(e) {
             success: function(response) {
                 var data = JSON.parse(response);
 
-                $('#infoModal').modal()
                 document.getElementById("infoModalStatus").textContent = data.status + '!'
                 document.getElementById("infoModalMsg").innerHTML = data.msg
+            },
+            complete: function() {
+                $('#loading-image').hide();
             }
         })
     })

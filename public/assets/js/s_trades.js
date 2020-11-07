@@ -1,5 +1,8 @@
 function saveCourseOffer() {
     var choice = this.choice
+    $('#infoModal').modal()
+    document.getElementById("infoModalStatus").textContent = 'Pending...'
+    $('#loading-image').show();
     $(function() {
         $.ajax({
             type: "POST",
@@ -7,9 +10,11 @@ function saveCourseOffer() {
             success: function(response) {
                 var data = JSON.parse(response);
 
-                $('#infoModal').modal()
                 document.getElementById("infoModalStatus").textContent = data.status + '!'
                 document.getElementById("infoModalMsg").textContent = data.msg
+            },
+            complete: function() {
+                $('#loading-image').hide();
             }
         })
     })
@@ -18,6 +23,7 @@ function saveCourseOffer() {
 function openConfirmationOfferCourse(e) {
     this.choice = e.target.id
     var choice = this.choice
+    $('#loading-image').hide();
     $(function() {
         $.ajax({
             type: "POST",
@@ -45,6 +51,9 @@ function postCourseTrade() {
         }
     }
 
+    $('#infoModal').modal()
+    document.getElementById("infoModalStatus").textContent = 'Pending...'
+    $('#loading-image').show();
     $(function() {
         $.ajax({
             type: "POST",
@@ -52,9 +61,11 @@ function postCourseTrade() {
             success: function(response) {
                 var data = JSON.parse(response);
 
-                $('#infoModal').modal()
                 document.getElementById("infoModalStatus").textContent = data.status + '!'
                 document.getElementById("infoModalMsg").textContent = data.msg
+            },
+            complete: function() {
+                $('#loading-image').hide();
             }
         })
     })
@@ -299,7 +310,9 @@ function getTransferRequests() {
 function openConfirmationCancel(e) {
     this.choice = e.target.id
     var choice = this.choice
-
+    $('#infoModal').modal()
+    document.getElementById("infoModalStatus").textContent = 'Pending...'
+    $('#loading-image').show();
     $(function() {
         $.ajax({
             type: "POST",
@@ -307,9 +320,11 @@ function openConfirmationCancel(e) {
             success: function(response) {
                 var data = JSON.parse(response);
 
-                $('#infoModal').modal()
                 document.getElementById("infoModalStatus").textContent = data.status + '!'
                 document.getElementById("infoModalMsg").innerHTML = data.msg
+            },
+            complete: function() {
+                $('#loading-image').hide();
             }
         })
     })
@@ -323,7 +338,9 @@ function insertTransferRequest() {
     var transferToCourse = e.options[e.selectedIndex].value
 
     var data = transferFromCourse + '.' + transferToCourse
-
+    $('#infoModal').modal()
+    document.getElementById("infoModalStatus").textContent = 'Pending...'
+    $('#loading-image').show();
     $(function() {
         $.ajax({
             type: "POST",
@@ -331,9 +348,11 @@ function insertTransferRequest() {
             success: function(response) {
                 var data = JSON.parse(response);
 
-                $('#infoModal').modal()
                 document.getElementById("infoModalStatus").textContent = data.status + '!'
                 document.getElementById("infoModalMsg").textContent = data.msg
+            },
+            complete: function() {
+                $('#loading-image').hide();
             }
         })
     })
