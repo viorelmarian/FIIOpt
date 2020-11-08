@@ -296,3 +296,16 @@ a {
         transform: rotate(360deg);
     }
 }
+
+.notification .badge {
+    margin-top: -38px;
+    margin-left: 113px;
+    border-radius: 100%;
+    background-color: red;
+    color: white;
+    height: 25px;
+    width: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

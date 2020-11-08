@@ -46,6 +46,23 @@ function getChoices() {
     })
 }
 
+function getOffersNumber() {
+    document.getElementById("notification_number").hidden = true;
+    $(function() {
+        $.ajax({
+            type: "GET",
+            url: "trades/getTradeOffersNumber",
+            success: function(response) {
+                var data = JSON.parse(response);
+                if (data > 0) {
+                    document.getElementById("notification_number").innerHTML = data;
+                    document.getElementById("notification_number").hidden = false;
+                }
+            }
+        })
+    })
+}
+
 function getAssignations() {
     $(function() {
         $.ajax({

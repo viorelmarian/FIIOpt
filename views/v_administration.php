@@ -48,7 +48,7 @@
 
     </nav>
     <div class="container aligner">
-        <div class="columns" style="justify-content:center;">
+        <div class="columns mt-4" style="justify-content:center;">
             <div class="left-column" style="width: 100%">
                 <div id="courses" class="show">
                     <div class="form-group col-md-6">

@@ -323,6 +323,23 @@ function changePackage() {
     document.getElementById('target-package-' + selectedPackage).hidden = false;
 }
 
+function getOffersNumber() {
+    document.getElementById("notification_number").hidden = true;
+    $(function() {
+        $.ajax({
+            type: "GET",
+            url: "trades/getTradeOffersNumber",
+            success: function(response) {
+                var data = JSON.parse(response);
+                if (data > 0) {
+                    document.getElementById("notification_number").innerHTML = data;
+                    document.getElementById("notification_number").hidden = false;
+                }
+            }
+        })
+    })
+}
+
 function saveChoices() {
     var options = new Array();
     var unselected = 0;
@@ -344,6 +361,10 @@ function saveChoices() {
     }
 
     if (unselected == 0) {
+        $('#infoModal').modal()
+        document.getElementById("infoModalStatus").textContent = 'Pending...'
+        document.getElementById("infoModalMsg").innerHTML = ''
+        $('#loading-image').show();
         $(function() {
             $.ajax({
                 type: "post",
@@ -353,9 +374,12 @@ function saveChoices() {
                 },
                 success: function(response) {
                     var data = JSON.parse(response);
-                    $('#infoModal').modal()
+
                     document.getElementById("infoModalStatus").textContent = data.status + '!'
                     document.getElementById("infoModalMsg").textContent = data.msg
+                },
+                complete: function() {
+                    $('#loading-image').hide();
                 }
             })
         })

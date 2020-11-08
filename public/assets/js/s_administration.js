@@ -57,29 +57,28 @@ function displayStatistics() {
 }
 
 function getCycles() {
-    var request = new XMLHttpRequest()
 
-    request.open('GET', 'courses/getStudyCycles', true)
+    $(function() {
+        $.ajax({
+            type: "GET",
+            url: "courses/getStudyCycles",
+            success: function(response) {
+                var data = JSON.parse(response);
 
-    request.onload = function() {
-        var data = JSON.parse(this.response)
-        const s = document.getElementById('course_cycle')
+                const s = document.getElementById('course_cycle')
 
-        if (request.status >= 200 && request.status < 400) {
-            i = 0
-            data.forEach(item => {
-                i = i + 1
-                const o = document.createElement("option")
-                o.setAttribute("value", item.study_cycle_id)
-                o.innerHTML = i + '.   ' + item.name
+                i = 0
+                data.forEach(item => {
+                    i = i + 1
+                    const o = document.createElement("option")
+                    o.setAttribute("value", item.study_cycle_id)
+                    o.innerHTML = i + '.   ' + item.name
 
-                s.appendChild(o)
-            })
-        } else {
-            console.log('error')
-        }
-    }
-    request.send()
+                    s.appendChild(o)
+                })
+            }
+        })
+    })
 }
 
 function getProfessors() {

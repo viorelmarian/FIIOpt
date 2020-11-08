@@ -2,6 +2,7 @@ function saveCourseOffer() {
     var choice = this.choice
     $('#infoModal').modal()
     document.getElementById("infoModalStatus").textContent = 'Pending...'
+    document.getElementById("infoModalMsg").innerHTML = ''
     $('#loading-image').show();
     $(function() {
         $.ajax({
@@ -53,6 +54,7 @@ function postCourseTrade() {
 
     $('#infoModal').modal()
     document.getElementById("infoModalStatus").textContent = 'Pending...'
+    document.getElementById("infoModalMsg").innerHTML = ''
     $('#loading-image').show();
     $(function() {
         $.ajax({
@@ -129,6 +131,23 @@ function getTransferableOptions() {
 
                     s.appendChild(o)
                 })
+            }
+        })
+    })
+}
+
+function getOffersNumber() {
+    document.getElementById("notification_number").hidden = true;
+    $(function() {
+        $.ajax({
+            type: "GET",
+            url: "trades/getTradeOffersNumber",
+            success: function(response) {
+                var data = JSON.parse(response);
+                if (data > 0) {
+                    document.getElementById("notification_number").innerHTML = data;
+                    document.getElementById("notification_number").hidden = false;
+                }
             }
         })
     })
@@ -312,6 +331,7 @@ function openConfirmationCancel(e) {
     var choice = this.choice
     $('#infoModal').modal()
     document.getElementById("infoModalStatus").textContent = 'Pending...'
+    document.getElementById("infoModalMsg").innerHTML = ''
     $('#loading-image').show();
     $(function() {
         $.ajax({
@@ -340,6 +360,7 @@ function insertTransferRequest() {
     var data = transferFromCourse + '.' + transferToCourse
     $('#infoModal').modal()
     document.getElementById("infoModalStatus").textContent = 'Pending...'
+    document.getElementById("infoModalMsg").innerHTML = ''
     $('#loading-image').show();
     $(function() {
         $.ajax({

@@ -8,7 +8,7 @@ function getTradeOffers() {
                 var data = JSON.parse(response);
 
                 const root = document.getElementById('trade_offers-root')
-
+                root.innerHTML = ""
                 data.forEach(item => {
                     const d = document.createElement("div")
                     d.setAttribute("class", "trades-card")
@@ -49,6 +49,7 @@ function acceptTrade(e) {
     var choice = this.choice
     $('#infoModal').modal()
     document.getElementById("infoModalStatus").textContent = 'Pending...'
+    document.getElementById("infoModalMsg").innerHTML = ''
     $('#loading-image').show();
     $(function() {
         $.ajax({
@@ -67,11 +68,29 @@ function acceptTrade(e) {
     })
 }
 
+function getOffersNumber() {
+    document.getElementById("notification_number").hidden = true;
+    $(function() {
+        $.ajax({
+            type: "GET",
+            url: "trades/getTradeOffersNumber",
+            success: function(response) {
+                var data = JSON.parse(response);
+                if (data > 0) {
+                    document.getElementById("notification_number").innerHTML = data;
+                    document.getElementById("notification_number").hidden = false;
+                }
+            }
+        })
+    })
+}
+
 function declineTrade(e) {
     this.choice = e.target.id
     var choice = this.choice
     $('#infoModal').modal()
     document.getElementById("infoModalStatus").textContent = 'Pending...'
+    document.getElementById("infoModalMsg").innerHTML = ''
     $('#loading-image').show();
     $(function() {
         $.ajax({

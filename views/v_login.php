@@ -19,7 +19,7 @@
                     <form action="/users/login" method="post" class="login-form">
                         <div class="form-group">
                             <label for="login_usr">Username</label>
-                            <input type="username" class="form-control" id="login_usr" placeholder="john.doe" name="login_usr" value=<?php echo isset($_SESSION["login_usr"]) ? $_SESSION["login_usr"] : ""; ?>>
+                            <input type="username" class="form-control" id="login_usr" placeholder="john.doe" name="login_usr">
                             <p style="color:red"><?php echo isset($_SESSION["error_usr"]) ? $_SESSION["error_usr"] : ""; ?></p>
                         </div>
                         <div class="form-group">

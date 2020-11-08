@@ -13,6 +13,5 @@ class administration {
             require_once "../views/v_admin.php";
         }
     }
-    
 }
 ?>
