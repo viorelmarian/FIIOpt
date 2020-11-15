@@ -13,7 +13,7 @@
     <title>{ FII_Opt } - Home</title>
 </head>
 
-<body style='background-image: url("assets/pictures/background_admin.jpg");' onload="getCourses(), getCycles(), getProfessors(), getTransferRequests(), loadPage()">
+<body class="full-height-body" style='background-image: url("assets/pictures/background_admin.jpg");' onload="getCourses(), getCycles(), getProfessors(), getTransferRequests(), getTradesRequests(), loadPage()">
     <div class="screen_page"></div>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
@@ -33,6 +33,9 @@
                         <a class="nav-link" onclick="displayProfessors()">{ Professors }</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" onclick="displayTrades()">{ Trades_Requests }</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" onclick="displayTransfers()">{ Transfer_Requests }</a>
                     </li>
                     <li class="nav-item">
@@ -47,14 +50,12 @@
         </div>
 
     </nav>
-    <div class="container aligner">
-        <div class="columns mt-4" style="justify-content:center;">
+    <div class="container aligner full-height-content">
+        <div class="columns mt-4 mb-4 full-height-content" style="justify-content:center;">
             <div class="left-column" style="width: 100%">
                 <div id="courses" class="show">
+                    <div class="text-white w-100 display-4 d-flex mb-3 justify-content-center position-relative" style="z-index: 1000">{ Courses }</div>
                     <div class="form-group col-md-6">
-                        <label for="inputCourse">
-                            <h4>Courses</h4>
-                        </label>
                         <select id="inputCourse" class="form-control" onchange="fillFormCourses()" style="padding-left: 30px;">
                             <option selected>Choose a course</option>
                         </select><br>
@@ -111,10 +112,8 @@
                     </div>
                 </div>
                 <div id="professors" class="hide">
+                    <div class="text-white w-100 display-4 d-flex mb-3 justify-content-center position-relative" style="z-index: 1000">{ Professors }</div>
                     <div class="form-group col-md-6">
-                        <label for="inputProfessor">
-                            <h4>Professors</h4>
-                        </label>
                         <select id="inputProfessor" class="form-control" onchange="fillFormProfessors()" style="padding-left: 30px;">
                             <option selected>Choose a professor</option>
                         </select><br>
@@ -144,11 +143,19 @@
                         </form>
                     </div>
                 </div>
+                <div id="trades" class="hide">
+                    <div class="text-white w-100 display-4 d-flex mb-3 justify-content-center position-relative" style="z-index: 1000">{ Trades }</div>
+                    <div id="trades-root">
+                    </div>
+                </div>
                 <div id="transfers" class="hide">
+                    <div class="text-white w-100 display-4 d-flex mb-3 justify-content-center position-relative" style="z-index: 1000">{ Transfers }</div>
+                    <div id="transfers-root">
+                    </div>
                 </div>
                 <div id="statistics" class="hide">
                     <div class="card-body form-box">
-                        <h1>Optionale</h1>
+                        <h1>Courses</h1>
                         <form>
                             <div class="form-column" style="padding-top: 15px;">
                                 <div class="form-group col-md-6">
@@ -166,7 +173,7 @@
                         </form>
                     </div>
                     <div class="card-body form-box">
-                        <h1>Transferuri</h1>
+                        <h1>Transfers</h1>
                         <form>
                             <div class="form-column" style="padding-top: 15px;">
                                 <div class="form-group col-md-6">
@@ -186,6 +193,10 @@
                                 </div>
                             </div>
                         </form>
+                    </div>
+                    <div class="card-body form-box">
+                        <h1>Actions</h1>
+                        <button type="button" class="btn btn-primary" onclick="assignCourses()">Assign Courses</button>
                     </div>
                 </div>
             </div>

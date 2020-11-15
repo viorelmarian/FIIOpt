@@ -94,7 +94,6 @@ class m_trades {
         $stmt->execute();
         return $stmt->get_result(); 
     }
-    
     function insertTransferRequest($fromCourseId, $toCourseId) {
         $stmt = $this->conn->prepare("  INSERT INTO `transfer_requests`(`transfer_id`,`transfer_student_id`, `transfer_from_course_id`, `transfer_to_course_id`, `status`) 
                                         VALUES (?,?,?,?,?)");
@@ -105,7 +104,6 @@ class m_trades {
         $stmt->execute();
         return $stmt->get_result(); 
     }
-
     function getTransferRequestsForUser() {
         $stmt = $this->conn->prepare("  SELECT * 
                                         FROM    `transfer_requests`
@@ -118,20 +116,42 @@ class m_trades {
         $stmt->execute();
         return $stmt->get_result();
     }
-
     function getTransferRequests() {
         $stmt = $this->conn->prepare("  SELECT * 
                                         FROM    `transfer_requests`
                                         JOIN    `courses`
-                                        ON      `transfer_requests`.`transfer_to_course_id` = `courses`.`course_id`
+                                            ON  `transfer_requests`.`transfer_to_course_id` = `courses`.`course_id`
                                         JOIN    `students`
-                                        ON      `transfer_requests`.`transfer_student_id` = `students`.`student_id`
+                                            ON  `transfer_requests`.`transfer_student_id` = `students`.`student_id`
                                         WHERE   `status` = 'Pending'");
                                         
         $stmt->execute();
         return $stmt->get_result();
     }
-
+    function getTradesRequests() {
+        $stmt = $this->conn->prepare("  SELECT  `trades`.`trade_id` AS `trade_id`,
+                                                `c1`.`course_id`    AS `donor_course_id`, 
+                                                `c1`.`name`         AS `donor_course_name`,
+                                                `c2`.`course_id`    AS `receiver_course_id`, 
+                                                `c2`.`name`         AS `receiver_course_name`,
+                                                `s1`.`student_id`   AS `donor_student_id`, 
+                                                `s1`.`username`     AS `donor_student_username`,
+                                                `s2`.`student_id`   AS `receiver_student_id`, 
+                                                `s2`.`username`     AS `receiver_student_username`
+                                        FROM    `trades`
+                                        JOIN    `courses` AS `c1`
+                                            ON  `trades`.`donor_course_id`      = `c1`.`course_id`
+                                        JOIN    `courses` AS `c2`
+                                            ON  `trades`.`receiver_course_id`   = `c2`.`course_id`
+                                        JOIN	`students` AS `s1`
+                                            ON  `trades`.`donor_student_id`     = `s1`.`student_id`
+                                        JOIN	`students` AS `s2`
+                                            ON  `trades`.`receiver_student_id`  = `s2`.`student_id`
+                                        WHERE   `trades`.`status`               = 'Secretary'");
+                                        
+        $stmt->execute();
+        return $stmt->get_result();
+    }
     function cancelTransferRequest($transferId) {
         $stmt = $this->conn->prepare("  UPDATE  `transfer_requests` 
                                         SET     `status` = 'Canceled'
@@ -165,6 +185,9 @@ class m_trades {
 
         return $stmt->get_result();
     }
+    function acceptTradeRequest($trade_id) { 
+        //TODO: Cand trade-ul este acceptat, efectueaza schimbul in AssignedCourses.
+    }
     function declineTransferRequest($transferId) {
         $stmt = $this->conn->prepare("  UPDATE  `transfer_requests` 
                                         SET     `status` = 'Declined'
@@ -173,7 +196,9 @@ class m_trades {
         $stmt->execute();
         return $stmt->get_result();
     }
-
+    function declineTradeRequest($trade_id) {
+        //TODO: Cand trade-ul este declined de catre secretar, sterge trade-ul de tot, cu tot cu oferte si toate info despre el
+    }
     function getTransferRequestsForCourse($courseId) {
         $stmt = $this->conn->prepare("  SELECT    COUNT(*) 
                                         FROM    `transfer_requests` 
@@ -185,4 +210,3 @@ class m_trades {
         return $stmt->get_result();
     }
 }
-?>

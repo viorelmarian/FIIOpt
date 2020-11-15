@@ -77,7 +77,6 @@ class m_choices
         $stmt->execute();
         return $stmt->get_result();
     }
-
     function getPrioChoices($user)
     {
         $stmt = $this->conn->prepare("  SELECT      `name`,

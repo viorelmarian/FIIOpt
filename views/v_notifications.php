@@ -61,58 +61,60 @@
             <input class="form-control mr-sm-2 filter-name" type="search" placeholder="Search" aria-label="Search" id="search" oninput="getTradeOffers()">
         </div>
         <div class="columns mt-4 mb-4 full-height-content" style="justify-content:center;">
-            <div class="left-column full-height-content flex-column" id="trade_offers-root" style="width: 100%">
+            <div class="left-column full-height-content flex-column" style="width: 100%">
                 <div class="text-white w-100 display-4 d-flex justify-content-center" style="z-index: 1000">{ Notifications }</div>
-            </div>
-        </div>
-    </div>
-    <!-- Modal -->
-    <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="infoModalStatus"></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div id="loading-image" class="mt-5" style="margin: auto;">
-                    <div class="loader"></div>
-                </div>
-                <div class="modal-body" id="infoModalMsg">
-                    <p></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <div class=" full-height-content flex-column" id="trade_offers-root" style="width: 100%">
+                    <div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
-    <script src="../assets/js/s_notifications.js"></script>
-    <script>
-        // Enable pusher logging - don't include this in production
-        Pusher.logToConsole = true;
+            <!-- Modal -->
+            <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="infoModalStatus"></h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div id="loading-image" class="mt-5" style="margin: auto;">
+                            <div class="loader"></div>
+                        </div>
+                        <div class="modal-body" id="infoModalMsg">
+                            <p></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+            <script src="../assets/js/s_notifications.js"></script>
+            <script>
+                // Enable pusher logging - don't include this in production
+                Pusher.logToConsole = true;
 
-        var pusher = new Pusher('d17be8547939203b0379', {
-            cluster: 'eu'
-        });
+                var pusher = new Pusher('d17be8547939203b0379', {
+                    cluster: 'eu'
+                });
 
-        var channel = pusher.subscribe('trades');
+                var channel = pusher.subscribe('trades');
 
-        channel.bind('new_offer', function(data) {
-            getOffersNumber()
-            getTradeOffers()
-        });
+                channel.bind('new_offer', function(data) {
+                    getOffersNumber()
+                    getTradeOffers()
+                });
 
-        channel.bind('remove_offer', function(data) {
-            getOffersNumber()
-            getTradeOffers()
-        });
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+                channel.bind('remove_offer', function(data) {
+                    getOffersNumber()
+                    getTradeOffers()
+                });
+            </script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
 
 </html>

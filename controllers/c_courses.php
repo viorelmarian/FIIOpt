@@ -22,6 +22,7 @@ class courses
             require_once "../views/v_login.php";
         }
     }
+
     function getAllCourses()
     {
         if ($this->isAjax()) {
@@ -60,6 +61,7 @@ class courses
             die(header("HTTP/1.1 404 Not Found"));
         }
     }
+
     function getStudyCycles()
     {
         if ($this->isAjax()) {
@@ -98,6 +100,7 @@ class courses
             die(header("HTTP/1.1 404 Not Found"));
         }
     }
+
     function getProfessors()
     {
         if ($this->isAjax()) {
@@ -136,6 +139,7 @@ class courses
             die(header("HTTP/1.1 404 Not Found"));
         }
     }
+
     function getById($courseId)
     {
         if ($this->isAjax()) {
@@ -180,6 +184,7 @@ class courses
             die(header("HTTP/1.1 404 Not Found"));
         }
     }
+
     function get()
     {
         if ($this->isAjax()) {

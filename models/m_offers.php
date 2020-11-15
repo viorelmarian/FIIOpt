@@ -149,6 +149,10 @@ class m_offers
 
     function acceptOffer($offerId)
     {
+        //TODO: Cand oferta este acceptata, pune cursul din oferta in trade. Schimba status la trade in Secretary. Invalideaza restul ofertelor
+        //Muta logica de schimbare cursuri (assigned courses) in trades/AcceptTradeRequest
+
+        //Accepta oferta
         $stmt = $this->conn->prepare("  UPDATE  `trade_offers`
                                         SET     `status` = 'Accepted'
                                         WHERE   `offer_id` = ?");
@@ -157,6 +161,7 @@ class m_offers
         $stmt->execute();
         $stmt->close();
 
+        //Selecteaza datele despre aceasta oferta(cea acceptata)
         $stmt = $this->conn->prepare("  SELECT  *
                                         FROM    `trade_offers` 
                                         WHERE   `offer_id` = ?");
@@ -173,6 +178,7 @@ class m_offers
 
         $stmt->close();
 
+        //Invalideaza restul ofertelor pe acest trade
         $stmt = $this->conn->prepare("  UPDATE  `trade_offers`
                                         SET     `status` = 'Declined'
                                         WHERE   `trade_id` = ?
@@ -182,16 +188,18 @@ class m_offers
         $stmt->execute();
         $stmt->close();
 
+        //Seteaza receiver course si receiver student in trade. Pune status Secretary
         $stmt = $this->conn->prepare("  UPDATE  `trades`
                                         SET     `receiver_course_id` = ?, 
                                                 `receiver_student_id` = ?,
-                                                `status` = 'Completed'
+                                                `status` = 'Secretary'
                                         WHERE   `trade_id` = ?");
 
         $stmt->bind_param("sss", $offerCourseId, $offerStudentId, $tradeId);
         $stmt->execute();
         $stmt->close();
 
+        //Selecteaza datele despre donor student/course
         $stmt = $this->conn->prepare("  SELECT  `donor_student_id`,
                                                 `donor_course_id`
                                         FROM    `trades`
@@ -207,6 +215,7 @@ class m_offers
 
         $stmt->close();
 
+        //Schimba cursurile pentru Donor Student
         $stmt = $this->conn->prepare("  UPDATE  `assigned_courses`
                                         SET     `course_id`  = ?, 
                                                 `status`     = 'Traded'
@@ -217,6 +226,7 @@ class m_offers
         $stmt->execute();
         $stmt->close();
 
+        //Schimba cursurile pentru Receiver Student
         $stmt = $this->conn->prepare("  UPDATE  `assigned_courses`
                                         SET     `course_id`  = ?, 
                                                 `status`     = 'Traded'

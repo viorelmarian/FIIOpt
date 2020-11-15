@@ -237,6 +237,7 @@ function getAssignedCourses() {
         })
     })
 }
+
 const capitalize = (s) => {
     if (typeof s !== 'string')
         return ''

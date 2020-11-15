@@ -6,6 +6,9 @@ function loadPage() {
         case "professors":
             displayProfessors()
             break;
+        case "trades":
+            displayTrades()
+            break;
         case "transfers":
             displayTransfers()
             break;
@@ -21,6 +24,8 @@ function hideAll() {
     courses = document.getElementById("courses")
     courses.className = "hide"
     courses = document.getElementById("professors")
+    courses.className = "hide"
+    courses = document.getElementById("trades")
     courses.className = "hide"
     courses = document.getElementById("transfers")
     courses.className = "hide"
@@ -40,6 +45,13 @@ function displayProfessors() {
     courses = document.getElementById("professors")
     courses.className = "show"
     sessionStorage.setItem("position", "professors")
+}
+
+function displayTrades() {
+    hideAll()
+    courses = document.getElementById("trades")
+    courses.className = "show"
+    sessionStorage.setItem("position", "trades")
 }
 
 function displayTransfers() {
@@ -282,7 +294,7 @@ function getTransferRequests() {
             success: function(response) {
                 var data = JSON.parse(response);
 
-                const root = document.getElementById('transfers')
+                const root = document.getElementById('transfers-root')
                 root.innerHTML = "";
 
                 data.forEach(item => {
@@ -300,7 +312,7 @@ function getTransferRequests() {
                     const btnAccept = document.createElement('a')
                     btnAccept.setAttribute('class', 'btn btn-notif btn-success')
                     btnAccept.setAttribute('id', item.transfer_id)
-                    btnAccept.setAttribute('onclick', 'openConfirmationAccept(event)')
+                    btnAccept.setAttribute('onclick', 'openConfirmationAcceptTransfer(event)')
                     btnAccept.textContent = '{ Accept }'
 
                     d.appendChild(btnAccept)
@@ -308,7 +320,7 @@ function getTransferRequests() {
                     const btnDecline = document.createElement('a')
                     btnDecline.setAttribute('class', 'btn btn-notif btn-danger')
                     btnDecline.setAttribute('id', item.transfer_id)
-                    btnDecline.setAttribute('onclick', 'openConfirmationDecline(event)')
+                    btnDecline.setAttribute('onclick', 'openConfirmationDeclineTransfer(event)')
                     btnDecline.textContent = '{ Decline }'
 
                     d.appendChild(btnDecline)
@@ -317,13 +329,68 @@ function getTransferRequests() {
         })
     })
 }
+
+function getTradesRequests() {
+
+    $(function() {
+        $.ajax({
+            type: "GET",
+            url: 'trades/getTradesRequests',
+            success: function(response) {
+                var data = JSON.parse(response);
+
+                const root = document.getElementById('trades-root')
+                root.innerHTML = "";
+
+                data.forEach(item => {
+                    const d = document.createElement("div")
+                    d.setAttribute("class", "trades-card")
+
+                    root.appendChild(d)
+
+                    const p = document.createElement("p")
+                    student_names = item.donor_student_username.split('.')
+                    donor_name = capitalize(student_names[0]) + ' ' + capitalize(student_names[1])
+
+                    student_names = item.receiver_student_username.split('.')
+                    receiver_name = capitalize(student_names[0]) + ' ' + capitalize(student_names[1])
+
+
+                    p.innerHTML = "Students <b>" + donor_name + "</b> and <b>" + receiver_name + " </b> want to trade the following courses: <br><br>" +
+                        "<b>" + donor_name + "</b>: " + item.donor_course_name + "<br>" +
+                        "<b>" + receiver_name + "</b>: " + item.receiver_course_name + "<br><br>" +
+                        "Do you accept the trade?"
+
+                    d.appendChild(p)
+
+                    const btnAccept = document.createElement('a')
+                    btnAccept.setAttribute('class', 'btn btn-notif btn-success')
+                    btnAccept.setAttribute('id', item.trade_id)
+                    btnAccept.setAttribute('onclick', 'openConfirmationAcceptTrade(event)')
+                    btnAccept.textContent = '{ Accept }'
+
+                    d.appendChild(btnAccept)
+
+                    const btnDecline = document.createElement('a')
+                    btnDecline.setAttribute('class', 'btn btn-notif btn-danger')
+                    btnDecline.setAttribute('id', item.trade_id)
+                    btnDecline.setAttribute('onclick', 'openConfirmationDeclineTrade(event)')
+                    btnDecline.textContent = '{ Decline }'
+
+                    d.appendChild(btnDecline)
+                })
+            }
+        })
+    })
+}
+
 const capitalize = (s) => {
     if (typeof s !== 'string')
         return ''
     return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
-function openConfirmationAccept(e) {
+function openConfirmationAcceptTransfer(e) {
     this.choice = e.target.id
 
     $(function() {
@@ -341,7 +408,25 @@ function openConfirmationAccept(e) {
     })
 }
 
-function openConfirmationDecline(e) {
+function openConfirmationAcceptTrade(e) {
+    this.choice = e.target.id
+
+    $(function() {
+        $.ajax({
+            type: "POST",
+            url: 'trades/acceptTradeRequest/' + this.choice,
+            success: function(response) {
+                var data = JSON.parse(response);
+
+                $('#infoModal').modal()
+                document.getElementById("infoModalStatus").textContent = data.status + '!'
+                document.getElementById("infoModalMsg").innerHTML = data.msg
+            }
+        })
+    })
+}
+
+function openConfirmationDeclineTransfer(e) {
     this.choice = e.target.id
 
     $(function() {
@@ -354,6 +439,45 @@ function openConfirmationDecline(e) {
                 $('#infoModal').modal()
                 document.getElementById("infoModalStatus").textContent = data.status + '!'
                 document.getElementById("infoModalMsg").innerHTML = data.msg
+            }
+        })
+    })
+}
+
+function openConfirmationDeclineTrade(e) {
+    this.choice = e.target.id
+
+    $(function() {
+        $.ajax({
+            type: "POST",
+            url: 'trades/declineTradeRequest/' + this.choice,
+            success: function(response) {
+                var data = JSON.parse(response);
+
+                $('#infoModal').modal()
+                document.getElementById("infoModalStatus").textContent = data.status + '!'
+                document.getElementById("infoModalMsg").innerHTML = data.msg
+            }
+        })
+    })
+}
+
+function assignCourses() {
+    $('#infoModal').modal()
+    document.getElementById("infoModalStatus").textContent = 'Pending...'
+    document.getElementById("infoModalMsg").innerHTML = ''
+    $(function() {
+        $.ajax({
+            type: "POST",
+            url: 'courses/assignCourses',
+            success: function() {
+
+                $('#infoModal').modal()
+                document.getElementById("infoModalStatus").textContent = 'Success!'
+                document.getElementById("infoModalMsg").innerHTML = 'Courses have been successfully assigned!'
+            },
+            complete: function() {
+                $('#loading-image').hide();
             }
         })
     })
