@@ -1,10 +1,13 @@
 <?php
-class m_trades {
+class m_trades
+{
     private $conn;
-    function m_trades($conn) {
+    function m_trades($conn)
+    {
         $this->conn = $conn;
     }
-    function getTrades($src) {
+    function getTrades($src)
+    {
         $stmt = $this->conn->prepare("SELECT * FROM `trades`    JOIN    `students`         ON `students`.`student_id`      = `trades`.`donor_student_id` 
                                                                 JOIN    `courses`          ON `courses`.`course_id`        = `trades`.`donor_course_id`
                                                                 WHERE   `name` LIKE ?
@@ -15,7 +18,8 @@ class m_trades {
         $stmt->execute();
         return $stmt->get_result();
     }
-    function getTradeOptions($trade_id) {
+    function getTradeOptions($trade_id)
+    {
         $stmt = $this->conn->prepare("SELECT *  FROM    `trade_options`
                                                 JOIN    `trades`    ON `trade_options`.`trade_id` = `trades`.`trade_id` 
                                                 JOIN    `courses`   ON `trade_options`.`option_course_id` = `courses`.`course_id`
@@ -24,13 +28,15 @@ class m_trades {
         $stmt->execute();
         return $stmt->get_result();
     }
-    function getAcceptedCourses($trade_id) {
+    function getAcceptedCourses($trade_id)
+    {
         $stmt = $this->conn->prepare("SELECT * FROM `trade_options` WHERE `trade_id` = ?");
         $stmt->bind_param("s", $trade_id);
         $stmt->execute();
         return $stmt->get_result();
     }
-    function insertTrade($course) {
+    function insertTrade($course)
+    {
         $stmt = $this->conn->prepare("SELECT    COUNT(*) 
                                                 FROM    `trades` 
                                                 WHERE   `donor_student_id` = ?
@@ -44,18 +50,18 @@ class m_trades {
                                                             ?,
                                                             ?,
                                                             ?
-                                                            )"
-                                        );
+                                                            )");
             $status = "Pending";
-            $trade_id = sha1(microtime(true).mt_rand(10000,90000));
+            $trade_id = sha1(microtime(true) . mt_rand(10000, 90000));
             $stmt->bind_param("ssss", $trade_id, $_SESSION["login_usr"], $course, $status);
             $stmt->execute();
             return True;
         } else {
             return False;
-        }        
+        }
     }
-    function insertOption($donorCourseId, $receiverCourseId) {
+    function insertOption($donorCourseId, $receiverCourseId)
+    {
         $stmt = $this->conn->prepare("INSERT    INTO    `trade_options`(`trade_opt_id`, `trade_id`, `option_course_id`) 
                                                 VALUES  (
                                                         ?,
@@ -64,15 +70,15 @@ class m_trades {
                                                                                     AND `donor_course_id` = ?
                                                             ),
                                                             ?
-                                                        )"
-                                    );
-        $trade_opt_id = sha1(microtime(true).mt_rand(10000,90000));
+                                                        )");
+        $trade_opt_id = sha1(microtime(true) . mt_rand(10000, 90000));
         $stmt->bind_param("ssss", $trade_opt_id, $_SESSION["login_usr"], $donorCourseId, $receiverCourseId);
         $stmt->execute();
-        return $stmt->get_result(); 
+        return $stmt->get_result();
     }
-    function getTradableCourses($courseId) {
-        
+    function getTradableCourses($courseId)
+    {
+
         $stmt = $this->conn->prepare("SELECT *  FROM    `courses` 
                                                 WHERE   `courses`.`package`     IN ( 
                                                                                 SELECT  `package` 
@@ -82,29 +88,32 @@ class m_trades {
                                                                                 SELECT  `year` 
                                                                                 FROM    `courses` 
                                                                                 WHERE   `course_id` = ?) 
-                                                AND     `course_id` <> ?");        
+                                                AND     `course_id` <> ?");
         $stmt->bind_param("sss", $courseId, $courseId, $courseId);
         $stmt->execute();
-        return $stmt->get_result(); 
+        return $stmt->get_result();
     }
-    function getUserForTrade($tradeId) {
+    function getUserForTrade($tradeId)
+    {
         $stmt = $this->conn->prepare("  SELECT  `donor_student_id`   FROM   `trades`                                     
-                                        WHERE   `trade_id` = ?");     
+                                        WHERE   `trade_id` = ?");
         $stmt->bind_param("s", $tradeId);
         $stmt->execute();
-        return $stmt->get_result(); 
+        return $stmt->get_result();
     }
-    function insertTransferRequest($fromCourseId, $toCourseId) {
+    function insertTransferRequest($fromCourseId, $toCourseId)
+    {
         $stmt = $this->conn->prepare("  INSERT INTO `transfer_requests`(`transfer_id`,`transfer_student_id`, `transfer_from_course_id`, `transfer_to_course_id`, `status`) 
                                         VALUES (?,?,?,?,?)");
         $user = $_SESSION["login_usr"];
         $status = 'Pending';
-        $transfer_id = sha1(microtime(true).mt_rand(10000,90000));
+        $transfer_id = sha1(microtime(true) . mt_rand(10000, 90000));
         $stmt->bind_param("sssss", $transfer_id, $user, $fromCourseId, $toCourseId, $status);
         $stmt->execute();
-        return $stmt->get_result(); 
+        return $stmt->get_result();
     }
-    function getTransferRequestsForUser() {
+    function getTransferRequestsForUser()
+    {
         $stmt = $this->conn->prepare("  SELECT * 
                                         FROM    `transfer_requests`
                                         JOIN    `courses`
@@ -116,7 +125,8 @@ class m_trades {
         $stmt->execute();
         return $stmt->get_result();
     }
-    function getTransferRequests() {
+    function getTransferRequests()
+    {
         $stmt = $this->conn->prepare("  SELECT * 
                                         FROM    `transfer_requests`
                                         JOIN    `courses`
@@ -124,11 +134,12 @@ class m_trades {
                                         JOIN    `students`
                                             ON  `transfer_requests`.`transfer_student_id` = `students`.`student_id`
                                         WHERE   `status` = 'Pending'");
-                                        
+
         $stmt->execute();
         return $stmt->get_result();
     }
-    function getTradesRequests() {
+    function getTradesRequests()
+    {
         $stmt = $this->conn->prepare("  SELECT  `trades`.`trade_id` AS `trade_id`,
                                                 `c1`.`course_id`    AS `donor_course_id`, 
                                                 `c1`.`name`         AS `donor_course_name`,
@@ -148,11 +159,12 @@ class m_trades {
                                         JOIN	`students` AS `s2`
                                             ON  `trades`.`receiver_student_id`  = `s2`.`student_id`
                                         WHERE   `trades`.`status`               = 'Secretary'");
-                                        
+
         $stmt->execute();
         return $stmt->get_result();
     }
-    function cancelTransferRequest($transferId) {
+    function cancelTransferRequest($transferId)
+    {
         $stmt = $this->conn->prepare("  UPDATE  `transfer_requests` 
                                         SET     `status` = 'Canceled'
                                         WHERE   `transfer_id` = ?");
@@ -160,7 +172,8 @@ class m_trades {
         $stmt->execute();
         return $stmt->get_result();
     }
-    function acceptTransferRequest($transferId) {
+    function acceptTransferRequest($transferId)
+    {
 
         $stmt = $this->conn->prepare("  SELECT  * 
                                         FROM    `transfer_requests`
@@ -185,10 +198,61 @@ class m_trades {
 
         return $stmt->get_result();
     }
-    function acceptTradeRequest($trade_id) { 
-        //TODO: Cand trade-ul este acceptat, efectueaza schimbul in AssignedCourses.
+    function acceptTradeRequest($trade_id)
+    {
+        //Selecteaza datele despre donor student/course
+        $stmt = $this->conn->prepare("  SELECT  `donor_student_id`,
+                                                `donor_course_id`,
+                                                `receiver_student_id`,
+                                                `receiver_course_id`
+                                        FROM    `trades`
+                                        WHERE   `trade_id` = ?");
+
+        $stmt->bind_param("s", $trade_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $result = $result->fetch_assoc();
+
+        $donorCourseId  = $result["donor_course_id"];
+        $donorStudentId = $result["donor_student_id"];
+        $receiverCourseId = $result["receiver_course_id"];
+        $receiverStudentId = $result["receiver_student_id"];
+
+        $stmt->close();
+
+        //Schimba cursurile pentru Donor Student
+        $stmt = $this->conn->prepare("  UPDATE  `assigned_courses`
+                                        SET     `course_id`  = ?, 
+                                                `status`     = 'Traded'
+                                        WHERE   `student_id` = ?
+                                        AND     `course_id`  = ?");
+
+        $stmt->bind_param("sss", $receiverCourseId, $donorStudentId, $donorCourseId);
+        $stmt->execute();
+        $stmt->close();
+
+        //Schimba cursurile pentru Receiver Student
+        $stmt = $this->conn->prepare("  UPDATE  `assigned_courses`
+                                        SET     `course_id`  = ?, 
+                                                `status`     = 'Traded'
+                                        WHERE   `student_id` = ?
+                                        AND     `course_id`  = ?");
+
+        $stmt->bind_param("sss", $donorCourseId, $receiverStudentId, $receiverCourseId);
+        $stmt->execute();
+        $stmt->close();
+
+        //Seteaza status Completed
+        $stmt = $this->conn->prepare("  UPDATE  `trades`
+                                        SET     `status` = 'Completed'
+                                        WHERE   `trade_id` = ?");
+
+        $stmt->bind_param("s", $trade_id);
+        $stmt->execute();
+        $stmt->close();
     }
-    function declineTransferRequest($transferId) {
+    function declineTransferRequest($transferId)
+    {
         $stmt = $this->conn->prepare("  UPDATE  `transfer_requests` 
                                         SET     `status` = 'Declined'
                                         WHERE   `transfer_id` = ?");
@@ -196,16 +260,31 @@ class m_trades {
         $stmt->execute();
         return $stmt->get_result();
     }
-    function declineTradeRequest($trade_id) {
-        //TODO: Cand trade-ul este declined de catre secretar, sterge trade-ul de tot, cu tot cu oferte si toate info despre el
+    function declineTradeRequest($trade_id)
+    {
+        $stmt = $this->conn->prepare("  DELETE FROM `trades` 
+                                        WHERE       `trade_id` = ?");
+        $stmt->bind_param("s", $trade_id);
+        $stmt->execute();
+        return $stmt->get_result();
     }
-    function getTransferRequestsForCourse($courseId) {
+    function getTransferRequestsForCourse($courseId)
+    {
         $stmt = $this->conn->prepare("  SELECT    COUNT(*) 
                                         FROM    `transfer_requests` 
                                         WHERE   `transfer_student_id` = ?
                                         AND     `transfer_from_course_id` = ?
                                         AND     `status` != 'Canceled'");
         $stmt->bind_param("ss", $_SESSION["login_usr"], $courseId);
+        $stmt->execute();
+        return $stmt->get_result();
+    }
+    function getTradeById($trade_id)
+    {
+        $stmt = $this->conn->prepare("  SELECT *
+                                        FROM `trades`
+                                        WHERE `trade_id` = ?");
+        $stmt->bind_param("s", $trade_id);
         $stmt->execute();
         return $stmt->get_result();
     }

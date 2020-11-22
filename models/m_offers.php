@@ -199,43 +199,43 @@ class m_offers
         $stmt->execute();
         $stmt->close();
 
-        //Selecteaza datele despre donor student/course
-        $stmt = $this->conn->prepare("  SELECT  `donor_student_id`,
-                                                `donor_course_id`
-                                        FROM    `trades`
-                                        WHERE   `trade_id` = ?");
+        // //Selecteaza datele despre donor student/course
+        // $stmt = $this->conn->prepare("  SELECT  `donor_student_id`,
+        //                                         `donor_course_id`
+        //                                 FROM    `trades`
+        //                                 WHERE   `trade_id` = ?");
 
-        $stmt->bind_param("s", $tradeId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $result = $result->fetch_assoc();
+        // $stmt->bind_param("s", $tradeId);
+        // $stmt->execute();
+        // $result = $stmt->get_result();
+        // $result = $result->fetch_assoc();
 
-        $donorCourseId  = $result["donor_course_id"];
-        $donorStudentId = $result["donor_student_id"];
+        // $donorCourseId  = $result["donor_course_id"];
+        // $donorStudentId = $result["donor_student_id"];
 
-        $stmt->close();
+        // $stmt->close();
 
-        //Schimba cursurile pentru Donor Student
-        $stmt = $this->conn->prepare("  UPDATE  `assigned_courses`
-                                        SET     `course_id`  = ?, 
-                                                `status`     = 'Traded'
-                                        WHERE   `student_id` = ?
-                                        AND     `course_id`  = ?");
+        // //Schimba cursurile pentru Donor Student
+        // $stmt = $this->conn->prepare("  UPDATE  `assigned_courses`
+        //                                 SET     `course_id`  = ?, 
+        //                                         `status`     = 'Traded'
+        //                                 WHERE   `student_id` = ?
+        //                                 AND     `course_id`  = ?");
 
-        $stmt->bind_param("sss", $offerCourseId, $donorStudentId, $donorCourseId);
-        $stmt->execute();
-        $stmt->close();
+        // $stmt->bind_param("sss", $offerCourseId, $donorStudentId, $donorCourseId);
+        // $stmt->execute();
+        // $stmt->close();
 
-        //Schimba cursurile pentru Receiver Student
-        $stmt = $this->conn->prepare("  UPDATE  `assigned_courses`
-                                        SET     `course_id`  = ?, 
-                                                `status`     = 'Traded'
-                                        WHERE   `student_id` = ?
-                                        AND     `course_id`  = ?");
+        // //Schimba cursurile pentru Receiver Student
+        // $stmt = $this->conn->prepare("  UPDATE  `assigned_courses`
+        //                                 SET     `course_id`  = ?, 
+        //                                         `status`     = 'Traded'
+        //                                 WHERE   `student_id` = ?
+        //                                 AND     `course_id`  = ?");
 
-        $stmt->bind_param("sss", $donorCourseId, $offerStudentId, $offerCourseId);
-        $stmt->execute();
-        $stmt->close();
+        // $stmt->bind_param("sss", $donorCourseId, $offerStudentId, $offerCourseId);
+        // $stmt->execute();
+        // $stmt->close();
     }
 
     function declineOffer($offerId)

@@ -392,17 +392,23 @@ const capitalize = (s) => {
 
 function openConfirmationAcceptTransfer(e) {
     this.choice = e.target.id
-
+    var choice = this.choice
+    $('#infoModal').modal()
+    document.getElementById("infoModalStatus").textContent = 'Pending...'
+    document.getElementById("infoModalMsg").innerHTML = ''
     $(function() {
         $.ajax({
             type: "POST",
-            url: 'trades/acceptTransferRequest/' + this.choice,
+            url: 'trades/acceptTransferRequest/' + choice,
             success: function(response) {
                 var data = JSON.parse(response);
 
                 $('#infoModal').modal()
                 document.getElementById("infoModalStatus").textContent = data.status + '!'
                 document.getElementById("infoModalMsg").innerHTML = data.msg
+            },
+            complete: function() {
+                $('#loading-image').hide();
             }
         })
     })
@@ -410,17 +416,23 @@ function openConfirmationAcceptTransfer(e) {
 
 function openConfirmationAcceptTrade(e) {
     this.choice = e.target.id
-
+    var choice = this.choice
+    $('#infoModal').modal()
+    document.getElementById("infoModalStatus").textContent = 'Pending...'
+    document.getElementById("infoModalMsg").innerHTML = ''
     $(function() {
         $.ajax({
             type: "POST",
-            url: 'trades/acceptTradeRequest/' + this.choice,
+            url: 'trades/acceptTradeRequest/' + choice,
             success: function(response) {
                 var data = JSON.parse(response);
 
                 $('#infoModal').modal()
                 document.getElementById("infoModalStatus").textContent = data.status + '!'
                 document.getElementById("infoModalMsg").innerHTML = data.msg
+            },
+            complete: function() {
+                $('#loading-image').hide();
             }
         })
     })
@@ -446,17 +458,23 @@ function openConfirmationDeclineTransfer(e) {
 
 function openConfirmationDeclineTrade(e) {
     this.choice = e.target.id
-
+    var choice = this.choice
+    $('#infoModal').modal()
+    document.getElementById("infoModalStatus").textContent = 'Pending...'
+    document.getElementById("infoModalMsg").innerHTML = ''
     $(function() {
         $.ajax({
             type: "POST",
-            url: 'trades/declineTradeRequest/' + this.choice,
+            url: 'trades/declineTradeRequest/' + choice,
             success: function(response) {
                 var data = JSON.parse(response);
 
                 $('#infoModal').modal()
                 document.getElementById("infoModalStatus").textContent = data.status + '!'
                 document.getElementById("infoModalMsg").innerHTML = data.msg
+            },
+            complete: function() {
+                $('#loading-image').hide();
             }
         })
     })

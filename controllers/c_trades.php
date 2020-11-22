@@ -781,7 +781,7 @@ class trades
                 $notifications->sendEmailAcceptTradeRequest($trade_id);
                 $response = array(
                     "status" => "Success",
-                    "msg" => "Transfer accepted successfully!"
+                    "msg" => "Trade accepted successfully!"
                 );
                 echo json_encode($response);
             } else {
@@ -815,7 +815,7 @@ class trades
                 $notifications->sendEmailDeclineTransferRequest($transferId);
                 $response = array(
                     "status" => "Success",
-                    "msg" => "Transfer declined successfully!"
+                    "msg" => "Transfer declined!"
                 );
                 echo json_encode($response);
             } else {
@@ -842,14 +842,14 @@ class trades
                     //Create model instance
                     $trades = new m_trades($db->conn);
                 }
-                $trades->declineTradeRequest($trade_id);
                 if (!isset($notifications)) {
                     $notifications = new notifications;
-                }
+                }                
                 $notifications->sendEmailDeclineTradeRequest($trade_id);
+                $trades->declineTradeRequest($trade_id);
                 $response = array(
                     "status" => "Success",
-                    "msg" => "Transfer declined successfully!"
+                    "msg" => "Trade declined!"
                 );
                 echo json_encode($response);
             } else {
