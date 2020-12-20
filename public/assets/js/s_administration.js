@@ -133,16 +133,24 @@ function getProfessors() {
 }
 
 function saveCourse() {
+
+    var course_year = $("input[name='course_year']:checked").val();
+    var course_package = $("input[name='course_package']:checked").val();
+
     data = 'id=' + document.getElementById("inputCourse").value + '&'
     data += 'name=' + document.getElementById("course_name").value + '&'
-    data += 'year=' + document.getElementById("course_year").value + '&'
-    data += 'package=' + document.getElementById("course_package").value + '&'
+    data += 'year=' + course_year + '&'
+    data += 'package=' + course_package + '&'
     data += 'cycle=' + document.getElementById("course_cycle").value + '&'
     data += 'link=' + document.getElementById("course_link").value + '&'
     data += 'no_studs=' + document.getElementById("course_no_studs").value + '&'
     data += 'professor1=' + document.getElementById("course_professor1").value + '&'
     data += 'professor2=' + document.getElementById("course_professor2").value
 
+    $('#infoModal').modal()
+    document.getElementById("infoModalStatus").textContent = 'Pending...'
+    document.getElementById("infoModalMsg").innerHTML = ''
+    $('#loading-image').show();
     $(function() {
         $.ajax({
             type: "GET",
@@ -153,6 +161,9 @@ function saveCourse() {
                 $('#infoModal').modal()
                 document.getElementById("infoModalStatus").textContent = data.status + '!'
                 document.getElementById("infoModalMsg").textContent = data.msg
+            },
+            complete: function() {
+                $('#loading-image').hide();
             }
         })
     })
@@ -164,6 +175,10 @@ function saveProfessor() {
     data += 'f_name=' + document.getElementById("f_name").value + '&'
     data += 'title=' + document.getElementById("title").value
 
+    $('#infoModal').modal()
+    document.getElementById("infoModalStatus").textContent = 'Pending...'
+    document.getElementById("infoModalMsg").innerHTML = ''
+    $('#loading-image').show();
     $(function() {
         $.ajax({
             type: "GET",
@@ -174,6 +189,9 @@ function saveProfessor() {
                 $('#infoModal').modal()
                 document.getElementById("infoModalStatus").textContent = data.status + '!'
                 document.getElementById("infoModalMsg").textContent = data.msg
+            },
+            complete: function() {
+                $('#loading-image').hide();
             }
         })
     })
@@ -182,6 +200,10 @@ function saveProfessor() {
 function deleteCourse() {
     courseId = document.getElementById("inputCourse").value
 
+    $('#infoModal').modal()
+    document.getElementById("infoModalStatus").textContent = 'Pending...'
+    document.getElementById("infoModalMsg").innerHTML = ''
+    $('#loading-image').show();
     $(function() {
         $.ajax({
             type: "GET",
@@ -192,6 +214,9 @@ function deleteCourse() {
                 $('#infoModal').modal()
                 document.getElementById("infoModalStatus").textContent = data.status + '!'
                 document.getElementById("infoModalMsg").textContent = data.msg
+            },
+            complete: function() {
+                $('#loading-image').hide();
             }
         })
     })
@@ -200,6 +225,10 @@ function deleteCourse() {
 function deleteProfessor() {
     professorId = document.getElementById("inputProfessor").value
 
+    $('#infoModal').modal()
+    document.getElementById("infoModalStatus").textContent = 'Pending...'
+    document.getElementById("infoModalMsg").innerHTML = ''
+    $('#loading-image').show();
     $(function() {
         $.ajax({
             type: "GET",
@@ -210,6 +239,9 @@ function deleteProfessor() {
                 $('#infoModal').modal()
                 document.getElementById("infoModalStatus").textContent = data.status + '!'
                 document.getElementById("infoModalMsg").textContent = data.msg
+            },
+            complete: function() {
+                $('#loading-image').hide();
             }
         })
     })
@@ -252,14 +284,61 @@ function fillFormCourses() {
             success: function(response) {
                 var data = JSON.parse(response);
 
-                document.getElementById("course_name").value = data[0].name
-                document.getElementById("course_year").value = data[0].year
-                document.getElementById("course_package").value = data[0].package
+                document.getElementById("course_name").value = data[0].name;
+                // document.getElementById("course_year").value = data[0].year
+                $("#course_year" + data[0].year).prop("checked", true);
+                // document.getElementById("course_package").value = data[0].package
+                $("#course_package" + data[0].package).prop("checked", true);
                 document.getElementById("course_cycle").value = data[0].study_cycle_id
                 document.getElementById("course_link").value = data[0].link
                 document.getElementById("course_no_studs").value = data[0].no_of_students
                 document.getElementById("course_professor1").value = data[0].professor_1
                 document.getElementById("course_professor2").value = data[0].professor_2
+            }
+        })
+    })
+
+    var past_courses;
+    $(function() {
+        $.ajax({
+            type: "GET",
+            url: 'courses/getPastCourses',
+            success: function(response) {
+                past_courses = JSON.parse(response);
+            }
+        })
+    })
+
+    const dependencies = document.getElementById('dependencies');
+    dependencies.innerHTML = '';
+
+    $(function() {
+        $.ajax({
+            type: "GET",
+            url: 'courses/getPastCoursesforCourse/' + courseId,
+            success: function(response) {
+                var data = JSON.parse(response);
+
+
+                var i = 0;
+                data.forEach(item => {
+                    i++;
+                    var select = document.createElement('select');
+                    select.setAttribute('id', 'dependency' + i);
+                    select.setAttribute('class', 'form-control mb-3');
+
+                    dependencies.appendChild(select);
+
+                    past_courses.forEach(element => {
+                        var option = document.createElement('option');
+                        option.setAttribute('value', element.past_course_id);
+                        if (element.past_course_id == item.past_course_id) {
+                            select.value = element.past_course_id
+                        }
+                        option.innerHTML = element.past_course_name;
+                        select.appendChild(option);
+                    });
+                })
             }
         })
     })
@@ -496,6 +575,37 @@ function assignCourses() {
             },
             complete: function() {
                 $('#loading-image').hide();
+            }
+        })
+    })
+}
+
+function addDependency() {
+    var dependencies = document.getElementById('dependencies');
+    var depno = dependencies.childElementCount + 1;
+
+    var select = document.createElement('select');
+    select.setAttribute('id', 'dependency' + depno);
+    select.setAttribute('class', 'form-control mb-3');
+
+    dependencies.appendChild(select);
+
+    $(function() {
+        $.ajax({
+            type: "GET",
+            url: 'courses/getPastCourses',
+            success: function(response) {
+                var data = JSON.parse(response);
+
+                const s = document.getElementById('inputCourse')
+
+                i = 0
+                data.forEach(item => {
+                    var option = document.createElement('option');
+                    option.setAttribute('value', item.past_course_id);
+                    option.innerHTML = item.past_course_name;
+                    select.appendChild(option);
+                })
             }
         })
     })

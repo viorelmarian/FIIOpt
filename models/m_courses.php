@@ -218,4 +218,33 @@ class m_courses
             return false;
         }
     }
+    function getPastCourses()
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM `past_courses`");
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return $result;
+    }
+    function getPastCoursesForCourse($course)
+    {
+        $stmt = $this->conn->prepare("SELECT *  FROM    `assignation_dependencies` AS `a`
+                                                JOIN    `past_courses` AS `p`
+                                                ON      `a`.`past_course_id` = `p`.`past_course_id`
+                                                WHERE   `a`.`course_id` = ?");
+        $stmt->bind_param("s", $course);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return $result;
+    }
+    function getPastCourseGrade($course, $student)
+    {
+        $stmt = $this->conn->prepare("SELECT `grade` FROM `past_courses_grades` WHERE `past_course_id` = ? AND `student_id` = ?");
+        $stmt->bind_param("ss", $course, $student);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return $result;
+    }
 }

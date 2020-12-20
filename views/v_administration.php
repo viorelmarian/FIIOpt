@@ -33,7 +33,7 @@
                         <a class="nav-link" onclick="displayProfessors()">{ Professors }</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" onclick="displayTrades()">{ Trades_Requests }</a>
+                        <a class="nav-link" onclick="displayTrades()">{ Trade_Requests }</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" onclick="displayTransfers()">{ Transfer_Requests }</a>
@@ -64,42 +64,150 @@
                         <form>
                             <div class="form-column" style="padding-top: 15px;">
                                 <div class="form-group col-md-6">
-                                    <label for="course_name">Course Name</label>
-                                    <input type="text" class="form-control" id="course_name" placeholder="Name" required>
-                                </div>
-                                <div class="form-group col-md-2">
-                                    <label for="course_year">Course Year</label>
-                                    <input type="text" class="form-control" id="course_year" placeholder="Year" required>
+                                    <div class="card">
+                                        <div class="card-header">
+                                            Course Name
+                                        </div>
+                                        <div class="card-body">
+                                            <input type="text" class="form-control" id="course_name" placeholder="Name" required>
+                                        </div>
+                                    </div>
+                                    <!-- <label for="course_name">Course Name</label>
+                                    <input type="text" class="form-control" id="course_name" placeholder="Name" required> -->
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label for="course_package">Package</label>
-                                    <input type="text" class="form-control" id="course_package" placeholder="Package" required>
+                                    <div class="card">
+                                        <div class="card-header">
+                                            Course Year
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="course_year" id="course_year1" value="1">
+                                                <label class="form-check-label" for="inlineRadio1">1</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="course_year" id="course_year2" value="2">
+                                                <label class="form-check-label" for="inlineRadio2">2</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="course_year" id="course_year3" value="3">
+                                                <label class="form-check-label" for="inlineRadio3">3</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- <label for="course_year">Course Year</label>
+                                    <input type="text" class="form-control" id="course_year" placeholder="Year" required> -->
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label for="course_cycle">Study Cycle</label>
+                                    <div class="card">
+                                        <div class="card-header">
+                                            Package
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="course_package" id="course_package1" value="1">
+                                                <label class="form-check-label" for="inlineRadio1">1</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="course_package" id="course_package2" value="2">
+                                                <label class="form-check-label" for="inlineRadio2">2</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="course_package" id="course_package3" value="3">
+                                                <label class="form-check-label" for="inlineRadio3">3</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="course_package" id="course_package4" value="4">
+                                                <label class="form-check-label" for="inlineRadio3">4</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="course_package" id="course_package5" value="5">
+                                                <label class="form-check-label" for="inlineRadio3">5</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- <label for="course_package">Package</label>
+                                    <input type="text" class="form-control" id="course_package" placeholder="Package" required> -->
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            Study Cycle
+                                        </div>
+                                        <div class="card-body">
+                                            <select id="course_cycle" class="form-control">
+                                                <option selected>Choose a study cycle</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <!-- <label for="course_cycle">Study Cycle</label>
                                     <select id="course_cycle" class="form-control">
                                         <option selected>Choose a study cycle</option>
-                                    </select>
+                                    </select> -->
                                 </div>
                                 <div class="form-group col-md-10">
-                                    <label for="course_link">Link</label>
-                                    <input type="text" class="form-control" id="course_link" placeholder="Link" required>
+                                    <div class="card">
+                                        <div class="card-header">
+                                            Link
+                                        </div>
+                                        <div class="card-body">
+                                            <input type="text" class="form-control" id="course_link" placeholder="Link" required>
+                                        </div>
+                                    </div>
+                                    <!-- <label for="course_link">Link</label>
+                                    <input type="text" class="form-control" id="course_link" placeholder="Link" required> -->
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label for="course_no_studs">Number Of Students</label>
-                                    <input type="text" class="form-control" id="course_no_studs" placeholder="Number" required>
+                                    <div class="card">
+                                        <div class="card-header">
+                                            Number Of Students
+                                        </div>
+                                        <div class="card-body">
+                                            <input type="text" class="form-control" id="course_no_studs" placeholder="Number" required>
+                                        </div>
+                                    </div>
+                                    <!-- <label for="course_no_studs">Number Of Students</label>
+                                    <input type="text" class="form-control" id="course_no_studs" placeholder="Number" required> -->
                                 </div>
                                 <div class="form-group col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            Professors
+                                        </div>
+                                        <div class="card-body">
+                                            <label for="course_professor1">Professor 1</label>
+                                            <select id="course_professor1" class="form-control">
+                                                <option selected>Choose a professor</option>
+                                            </select>
+                                            <br>
+                                            <label for="course_professor2">Professor 2</label>
+                                            <select id="course_professor2" class="form-control">
+                                                <option selected>Choose a professor</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="form-group col-md-6">
                                     <label for="course_professor1">Professor 1</label>
                                     <select id="course_professor1" class="form-control">
                                         <option selected>Choose a professor</option>
                                     </select>
-                                </div>
-                                <div class="form-group col-md-6">
+                                </div> -->
+                                <!-- <div class="form-group col-md-6">
                                     <label for="course_professor2">Professor 2</label>
                                     <select id="course_professor2" class="form-control">
                                         <option selected>Choose a professor</option>
                                     </select>
+                                </div> -->
+                                <div class="form-group col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">Dependencies</div>
+                                        <div class="card-body" id="dependencies">
+                                        </div>
+                                        <div class="card-footer">
+                                            <button type="button" class="btn btn-primary" onclick="addDependency()">Add dependency</button>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="form-group col-md-6">
                                     <button type="button" class="btn btn-primary" onclick="saveCourse()">Save</button>

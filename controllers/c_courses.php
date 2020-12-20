@@ -533,4 +533,82 @@ class courses
             die(header("HTTP/1.1 404 Not Found"));
         }
     }
+
+    function getPastCourses()
+    {
+        if ($this->isAjax()) {
+            //If logged in
+            if (isset($_SESSION["logged"]) || isset($_SESSION["logged_adm"])) {
+                //If db connection does not exist
+                if (!isset($db)) {
+                    //Create db connection
+                    $db = new database_conn;
+                    $db->connect();
+                }
+                //If model instance does not exist
+                if (!isset($courses)) {
+                    //Create model instance
+                    $courses = new m_courses($db->conn);
+                }
+                //Get data
+                $result = $courses->getPastCourses();
+                $rows = array();
+                //Fetch data in assoc array
+                while ($row = $result->fetch_assoc()) {
+                    foreach ($row as $key => $value) {
+                        //Encode each value of the row in utf8
+                        $row[$key] = utf8_encode($value);
+                    }
+                    //Add rows in Array
+                    $rows[] = $row;
+                }
+                //Encode in JSON Format and return
+                echo json_encode($rows);
+            } else {
+                //Redirect accordingly
+                require_once "../views/v_login.php";
+            }
+        } else {
+            die(header("HTTP/1.1 404 Not Found"));
+        }
+    }
+
+    function getPastCoursesforCourse($course)
+    {
+        if ($this->isAjax()) {
+            //If logged in
+            if (isset($_SESSION["logged"]) || isset($_SESSION["logged_adm"])) {
+                //If db connection does not exist
+                if (!isset($db)) {
+                    //Create db connection
+                    $db = new database_conn;
+                    $db->connect();
+                }
+                //If model instance does not exist
+                if (!isset($courses)) {
+                    //Create model instance
+                    $courses = new m_courses($db->conn);
+                }
+                //Get data
+                $result = $courses->getPastCoursesForCourse($course);
+                $rows = array();
+                //Fetch data in assoc array
+                while ($row = $result->fetch_assoc()) {
+                    foreach ($row as $key => $value) {
+                        //Encode each value of the row in utf8
+                        $row[$key] = utf8_encode($value);
+                    }
+                    //Add rows in Array
+                    $rows[] = $row;
+                }
+                //Encode in JSON Format and return
+                echo json_encode($rows);
+            } else {
+                //Redirect accordingly
+                require_once "../views/v_login.php";
+            }
+        } else {
+            die(header("HTTP/1.1 404 Not Found"));
+        }
+    }
 }
