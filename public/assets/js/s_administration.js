@@ -157,16 +157,36 @@ function saveCourse() {
             url: 'courses/saveCourse/' + data,
             success: function(response) {
                 var data = JSON.parse(response);
-
+                var dependencies = document.getElementById("dependencies").childNodes;
+                dependencies.forEach(dependency => {
+                    var options = new Array();
+                    options.push({
+                        "course": data['course_id'],
+                        "past_course": dependency.value
+                    })
+                    $(function() {
+                        $.ajax({
+                            type: "POST",
+                            url: 'courses/insertAssignationDependency',
+                            data: {
+                                "data": options
+                            },
+                            success: function(response) {}
+                        })
+                    })
+                });
                 $('#infoModal').modal()
                 document.getElementById("infoModalStatus").textContent = data.status + '!'
                 document.getElementById("infoModalMsg").textContent = data.msg
             },
             complete: function() {
+
                 $('#loading-image').hide();
             }
         })
     })
+
+
 }
 
 function saveProfessor() {
@@ -305,43 +325,46 @@ function fillFormCourses() {
             url: 'courses/getPastCourses',
             success: function(response) {
                 past_courses = JSON.parse(response);
-            }
-        })
-    })
 
-    const dependencies = document.getElementById('dependencies');
-    dependencies.innerHTML = '';
+                const dependencies = document.getElementById('dependencies');
+                dependencies.innerHTML = '';
 
-    $(function() {
-        $.ajax({
-            type: "GET",
-            url: 'courses/getPastCoursesforCourse/' + courseId,
-            success: function(response) {
-                var data = JSON.parse(response);
+                $(function() {
+                    $.ajax({
+                        type: "GET",
+                        url: 'courses/getPastCoursesforCourse/' + courseId,
+                        success: function(response) {
+                            var data = JSON.parse(response);
 
 
-                var i = 0;
-                data.forEach(item => {
-                    i++;
-                    var select = document.createElement('select');
-                    select.setAttribute('id', 'dependency' + i);
-                    select.setAttribute('class', 'form-control mb-3');
+                            var i = 0;
+                            data.forEach(item => {
+                                i++;
+                                var select = document.createElement('select');
+                                select.setAttribute('id', 'dependency' + i);
+                                select.setAttribute('class', 'form-control mb-3');
 
-                    dependencies.appendChild(select);
+                                dependencies.appendChild(select);
 
-                    past_courses.forEach(element => {
-                        var option = document.createElement('option');
-                        option.setAttribute('value', element.past_course_id);
-                        if (element.past_course_id == item.past_course_id) {
-                            select.value = element.past_course_id
+                                past_courses.forEach(element => {
+                                    var option = document.createElement('option');
+                                    option.setAttribute('value', element.past_course_id);
+                                    if (element.past_course_id == item.past_course_id) {
+                                        option.setAttribute('selected', 'selected')
+                                    }
+                                    option.innerHTML = element.past_course_name;
+                                    select.appendChild(option);
+                                });
+                            })
                         }
-                        option.innerHTML = element.past_course_name;
-                        select.appendChild(option);
-                    });
+                    })
                 })
             }
         })
     })
+
+
+
 }
 
 function fillFormProfessors() {
@@ -606,6 +629,37 @@ function addDependency() {
                     option.innerHTML = item.past_course_name;
                     select.appendChild(option);
                 })
+            }
+        })
+    })
+}
+
+function deleteDependencies() {
+    var options = new Array();
+    options.push({
+        "course": document.getElementById("inputCourse").value
+    })
+    $('#infoModal').modal()
+    document.getElementById("infoModalStatus").textContent = 'Pending...'
+    document.getElementById("infoModalMsg").innerHTML = ''
+    $('#loading-image').show();
+    $(function() {
+        $.ajax({
+            type: "POST",
+            url: 'courses/deleteAssignationDependencies',
+            data: {
+                "data": options
+            },
+            success: function(response) {
+                var data = JSON.parse(response);
+
+                $('#infoModal').modal()
+                document.getElementById("infoModalStatus").textContent = data.status + '!'
+                document.getElementById("infoModalMsg").textContent = data.msg
+            },
+            complete: function() {
+
+                $('#loading-image').hide();
             }
         })
     })

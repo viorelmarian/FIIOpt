@@ -264,7 +264,8 @@ class courses
                     if ($result) {
                         $response = array(
                             "status" => "Success",
-                            "msg" => "Course inserted successfully!"
+                            "msg" => "Course inserted successfully!",
+                            "course_id" => $result
                         );
                     } else {
                         $response = array(
@@ -277,7 +278,8 @@ class courses
                     if ($result) {
                         $response = array(
                             "status" => "Success",
-                            "msg" => "Course updated successfully!"
+                            "msg" => "Course updated successfully!",
+                            "course_id" => $result
                         );
                     } else {
                         $response = array(
@@ -536,7 +538,7 @@ class courses
 
     function getPastCourses()
     {
-        if ($this->isAjax()) {
+        // if ($this->isAjax()) {
             //If logged in
             if (isset($_SESSION["logged"]) || isset($_SESSION["logged_adm"])) {
                 //If db connection does not exist
@@ -568,12 +570,12 @@ class courses
                 //Redirect accordingly
                 require_once "../views/v_login.php";
             }
-        } else {
-            die(header("HTTP/1.1 404 Not Found"));
-        }
+        // } else {
+        //     die(header("HTTP/1.1 404 Not Found"));
+        // }
     }
 
-    function getPastCoursesforCourse($course)
+    function getPastCoursesForCourse($course)
     {
         if ($this->isAjax()) {
             //If logged in
@@ -603,6 +605,68 @@ class courses
                 }
                 //Encode in JSON Format and return
                 echo json_encode($rows);
+            } else {
+                //Redirect accordingly
+                require_once "../views/v_login.php";
+            }
+        } else {
+            die(header("HTTP/1.1 404 Not Found"));
+        }
+    }
+    function insertAssignationDependency()
+    {
+        if ($this->isAjax()) {
+            //If logged in
+            if (isset($_SESSION["logged"]) || isset($_SESSION["logged_adm"])) {
+                //If db connection does not exist
+                if (!isset($db)) {
+                    //Create db connection
+                    $db = new database_conn;
+                    $db->connect();
+                }
+                //If model instance does not exist
+                if (!isset($courses)) {
+                    //Create model instance
+                    $courses = new m_courses($db->conn);
+                }
+                //Get data
+                $options = $_POST['data'];
+                $courses->insertAssignationDependency($options[0]['course'], $options[0]['past_course']);
+            
+            } else {
+                //Redirect accordingly
+                require_once "../views/v_login.php";
+            }
+        } else {
+            die(header("HTTP/1.1 404 Not Found"));
+        }
+    }
+    function deleteAssignationDependencies()
+    {
+        if ($this->isAjax()) {
+            //If logged in
+            if (isset($_SESSION["logged"]) || isset($_SESSION["logged_adm"])) {
+                //If db connection does not exist
+                if (!isset($db)) {
+                    //Create db connection
+                    $db = new database_conn;
+                    $db->connect();
+                }
+                //If model instance does not exist
+                if (!isset($courses)) {
+                    //Create model instance
+                    $courses = new m_courses($db->conn);
+                }
+                //Get data
+                $options = $_POST['data'];
+                $courses->deleteAssignationDependencies($options[0]['course']);
+            
+                $response = array(
+                    "status" => "Success",
+                    "msg" => "Dependencies deleted successfully!"
+                );
+                //Encode in JSON Format and return
+                echo json_encode($response);
             } else {
                 //Redirect accordingly
                 require_once "../views/v_login.php";

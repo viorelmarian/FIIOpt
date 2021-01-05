@@ -204,16 +204,22 @@
                                         <div class="card-header">Dependencies</div>
                                         <div class="card-body" id="dependencies">
                                         </div>
-                                        <div class="card-footer">
+                                        <div class="card-footer d-flex justify-content-between">
                                             <button type="button" class="btn btn-primary" onclick="addDependency()">Add dependency</button>
+                                            <button type="button" class="btn btn-danger" onclick="deleteDependencies()">Delete Dependencies</button>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <button type="button" class="btn btn-primary" onclick="saveCourse()">Save</button>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <button type="button" class="btn btn-danger" onclick="deleteCourse()">Delete Course</button>
+                                    <div class="card">
+                                        <div class="card-header">
+                                            Actions
+                                        </div>
+                                        <div class="card-body d-flex justify-content-between">
+                                            <button type="button" class="btn btn-primary" onclick="saveCourse()">Save Course</button>
+                                            <button type="button" class="btn btn-danger" onclick="deleteCourse()">Delete Course</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </form>

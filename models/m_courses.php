@@ -114,7 +114,7 @@ class m_courses
             $stmt->bind_param("sss", $id, $courseId, $professor2);
             $stmt->execute();
 
-            return true;
+            return $courseId;
         } else {
             return false;
         }
@@ -174,7 +174,7 @@ class m_courses
             $stmt->execute();
         }
 
-        return true;
+        return $course_id;
     }
     function updateProfessor($id, $title, $l_name, $f_name)
     {
@@ -242,6 +242,32 @@ class m_courses
     {
         $stmt = $this->conn->prepare("SELECT `grade` FROM `past_courses_grades` WHERE `past_course_id` = ? AND `student_id` = ?");
         $stmt->bind_param("ss", $course, $student);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return $result;
+    }
+    function insertAssignationDependency($course_id, $past_course_id)
+    {
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM `assignation_dependencies` WHERE `course_id` = ? AND `past_course_id` = ?");
+        $stmt->bind_param("ss", $course_id, $past_course_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if (array_values($result->fetch_assoc())[0] == 0) {
+            $stmt = $this->conn->prepare("INSERT    INTO `assignation_dependencies`(`dependency_id`,`course_id`,`past_course_id`)
+            VALUES  (?, ?, ?)");
+            $dependencyid = sha1(microtime(true) . mt_rand(10000, 90000));
+            $stmt->bind_param("sss", $dependencyid, $course_id, $past_course_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+        }
+
+        return $result;
+    }
+    function deleteAssignationDependencies($course_id){
+        $stmt = $this->conn->prepare("DELETE FROM `assignation_dependencies` WHERE `course_id` = ?");        
+        $stmt->bind_param("s", $course_id);
         $stmt->execute();
         $result = $stmt->get_result();
 
