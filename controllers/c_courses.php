@@ -495,36 +495,53 @@ class courses
                     //Create model instance
                     $users = new m_users($db->conn);
                 }
-                $result = $users->getAllStudentsIds();
+                $result = $courses->getAssignationList();
                 while ($row = $result->fetch_assoc()) {
+                    //Get the gredes of the past courses relevant for this option assignation
+                    $result2 = $courses->getGradesOfRelevantPastCourses($row['course_id'], $row['student_id']);
+                    //Init with 0
+                    $option_grade = 0.00;
+                    $sum_of_grades = 0.00;
+                    $no_of_grades = 0;
+                    //Calculate average
+                    while ($row2 = $result2->fetch_assoc()) {
+                        $no_of_grades += 1;
+                        $sum_of_grades += $row2['grade'];
+                    }
+                    if ($no_of_grades <> 0) {
+                        $option_grade = $sum_of_grades / $no_of_grades;
+                    }
+                    //Add to array
+                    $row['option_grade'] = $option_grade;
+                    //Encode each value of the row in utf8
                     foreach ($row as $key => $value) {
-                        //Encode each value of the row in utf8
                         $row[$key] = utf8_encode($value);
                     }
                     //Add rows to Array
-                    $students[] = $row;
+                    $rows[] = $row;
                 }
-                $student_choices = array();
-                foreach ($students as $student) {
-                    $student_choices = array();
-                    $result = $choices->getAllChoices($student["student_id"]);
-                    while ($row = $result->fetch_assoc()) {
-                        foreach ($row as $key => $value) {
-                            //Encode each value of the row in utf8
-                            $row[$key] = utf8_encode($value);
+
+                array_multisort(
+                    array_column($rows, 'year'),
+                    SORT_ASC,
+                    array_column($rows, 'package'),
+                    SORT_ASC,
+                    array_column($rows, 'priority'),
+                    SORT_ASC,
+                    array_column($rows, 'option_grade'),
+                    SORT_DESC,
+                    array_column($rows, 'anual_grade'),
+                    SORT_DESC,
+                    $rows
+                );
+
+                foreach ($rows as $row) {
+                    $result = $assignations->validateChoice($row["course_id"], $row["student_id"]);
+                    if ($result->fetch_assoc()["COUNT(*)"] == 0) {
+                        $places_available = $courses->getAvailablePlaces($row["course_id"]);
+                        if ($places_available > 0) {
+                            $assignations->insert($row["course_id"], $row["student_id"]);
                         }
-                        //Add rows to Array
-                        $student_choices[] = $row;
-                    }
-                    foreach ($student_choices as $choice) {
-                        $result = $assignations->validateChoice($choice["course_id"], $student["student_id"]);
-                        if ($result->fetch_assoc()["COUNT(*)"] == 0) {
-                            $places_available = $courses->getAvailablePlaces($choice["course_id"]);
-                            if ($places_available > 0) {
-                                $assignations->insert($choice["course_id"], $student["student_id"]);
-                            }
-                        }
-                        $result = $assignations->validateChoice($choice["course_id"], $student["student_id"]);
                     }
                 }
             } else {
@@ -539,37 +556,37 @@ class courses
     function getPastCourses()
     {
         // if ($this->isAjax()) {
-            //If logged in
-            if (isset($_SESSION["logged"]) || isset($_SESSION["logged_adm"])) {
-                //If db connection does not exist
-                if (!isset($db)) {
-                    //Create db connection
-                    $db = new database_conn;
-                    $db->connect();
-                }
-                //If model instance does not exist
-                if (!isset($courses)) {
-                    //Create model instance
-                    $courses = new m_courses($db->conn);
-                }
-                //Get data
-                $result = $courses->getPastCourses();
-                $rows = array();
-                //Fetch data in assoc array
-                while ($row = $result->fetch_assoc()) {
-                    foreach ($row as $key => $value) {
-                        //Encode each value of the row in utf8
-                        $row[$key] = utf8_encode($value);
-                    }
-                    //Add rows in Array
-                    $rows[] = $row;
-                }
-                //Encode in JSON Format and return
-                echo json_encode($rows);
-            } else {
-                //Redirect accordingly
-                require_once "../views/v_login.php";
+        //If logged in
+        if (isset($_SESSION["logged"]) || isset($_SESSION["logged_adm"])) {
+            //If db connection does not exist
+            if (!isset($db)) {
+                //Create db connection
+                $db = new database_conn;
+                $db->connect();
             }
+            //If model instance does not exist
+            if (!isset($courses)) {
+                //Create model instance
+                $courses = new m_courses($db->conn);
+            }
+            //Get data
+            $result = $courses->getPastCourses();
+            $rows = array();
+            //Fetch data in assoc array
+            while ($row = $result->fetch_assoc()) {
+                foreach ($row as $key => $value) {
+                    //Encode each value of the row in utf8
+                    $row[$key] = utf8_encode($value);
+                }
+                //Add rows in Array
+                $rows[] = $row;
+            }
+            //Encode in JSON Format and return
+            echo json_encode($rows);
+        } else {
+            //Redirect accordingly
+            require_once "../views/v_login.php";
+        }
         // } else {
         //     die(header("HTTP/1.1 404 Not Found"));
         // }
@@ -613,6 +630,7 @@ class courses
             die(header("HTTP/1.1 404 Not Found"));
         }
     }
+
     function insertAssignationDependency()
     {
         if ($this->isAjax()) {
@@ -632,7 +650,6 @@ class courses
                 //Get data
                 $options = $_POST['data'];
                 $courses->insertAssignationDependency($options[0]['course'], $options[0]['past_course']);
-            
             } else {
                 //Redirect accordingly
                 require_once "../views/v_login.php";
@@ -641,6 +658,7 @@ class courses
             die(header("HTTP/1.1 404 Not Found"));
         }
     }
+
     function deleteAssignationDependencies()
     {
         if ($this->isAjax()) {
@@ -660,7 +678,7 @@ class courses
                 //Get data
                 $options = $_POST['data'];
                 $courses->deleteAssignationDependencies($options[0]['course']);
-            
+
                 $response = array(
                     "status" => "Success",
                     "msg" => "Dependencies deleted successfully!"

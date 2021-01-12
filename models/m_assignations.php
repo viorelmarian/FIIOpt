@@ -79,4 +79,15 @@ class m_assignations {
         $stmt->execute();
         return $stmt->get_result();
     }
+    function getAssigneesForCourse($course_id){
+        $stmt = $this->conn->prepare("  SELECT   `first_name`,`last_name`,`father_init`,`year`,`class`
+                                        FROM     `students_info`     AS `si`
+                                        JOIN     `assigned_courses`  AS `ac`
+                                        ON       `ac`.`student_id`   = `si`.`student_id`
+                                        WHERE    `ac`.`course_id`    = ?
+                                        ORDER BY `year`, `class`, `last_name`, `first_name` ASC");
+        $stmt->bind_param("s", $course_id);
+        $stmt->execute();
+        return $stmt->get_result();
+    }
 }

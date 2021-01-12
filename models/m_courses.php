@@ -19,9 +19,10 @@ class m_courses
     {
         $stmt = $this->conn->prepare("  SELECT      `username`, `course_id`, `name`, `courses`.`year`, `package`, `link` 
                                         FROM        `courses` 
-                                        JOIN        `students`  ON `courses`.`year` = `students`.`year`
+                                        JOIN        `students_info`  ON `courses`.`year` = `students_info`.`year`
+                                        JOIN        `students`       ON `students`.`student_id` = `students_info`.`student_id`
                                         WHERE       `courses`.`course_id` NOT IN ( SELECT `course_id` FROM `choices` WHERE `student_id` = ? )
-                                        AND         `student_id` = ?
+                                        AND         `students`.`student_id` = ?
                                         ORDER BY    `year`, `package`, `name` ASC");
 
         $stmt->bind_param("ss", $_SESSION["login_usr"], $_SESSION["login_usr"]);
@@ -265,9 +266,38 @@ class m_courses
 
         return $result;
     }
-    function deleteAssignationDependencies($course_id){
-        $stmt = $this->conn->prepare("DELETE FROM `assignation_dependencies` WHERE `course_id` = ?");        
+    function deleteAssignationDependencies($course_id)
+    {
+        $stmt = $this->conn->prepare("DELETE FROM `assignation_dependencies` WHERE `course_id` = ?");
         $stmt->bind_param("s", $course_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return $result;
+    }
+    function getAssignationList()
+    {
+        $stmt = $this->conn->prepare("  SELECT  `st`.`student_id`,   `ch`.`course_id`,  `co`.`year`, 
+                                                `co`.`package`   ,   `ch`.`priority`,   `si`.`grade` AS `anual_grade`
+                                        FROM    `students`      AS `st` 
+                                        JOIN    `choices`       AS `ch`
+                                        ON      `st`.`student_id`   = `ch`.`student_id`
+                                        JOIN    `courses`       AS `co`
+                                        ON      `co`.`course_id`    = `ch`.`course_id`
+                                        JOIN    `students_info` AS `si` 
+                                        ON      `si`.`student_id`   = `st`.`student_id`");
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return $result;
+    }
+    function getGradesOfRelevantPastCourses($course_id, $student_id) {
+        $stmt = $this->conn->prepare("  SELECT  `grade` FROM `past_courses_grades` AS `pcg`
+                                        JOIN    `assignation_dependencies` AS `asd`
+                                        ON      `pcg`.`past_course_id` = `asd`.`past_course_id`
+                                        WHERE   `pcg`.`student_id` = ?
+                                        AND     `asd`.`course_id`  = ?");
+        $stmt->bind_param("ss", $student_id, $course_id);
         $stmt->execute();
         $result = $stmt->get_result();
 

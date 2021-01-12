@@ -9,11 +9,11 @@ class m_users {
         $stmt->execute();
         return $stmt->get_result();
     }
-    function getAllStudentsIds() {
-        $stmt = $this->conn->prepare("SELECT `student_id` FROM `students` ORDER BY `grade` DESC");
-        $stmt->execute();
-        return $stmt->get_result();
-    }
+    // function getAllStudentsIds() {
+    //     $stmt = $this->conn->prepare("SELECT `student_id` FROM `students` ORDER BY `grade` DESC");
+    //     $stmt->execute();
+    //     return $stmt->get_result();
+    // }
     function getById($id) {    
         $stmt = $this->conn->prepare("SELECT * FROM `students` WHERE `student_id` = ?");        
         $stmt->bind_param("s", $id);

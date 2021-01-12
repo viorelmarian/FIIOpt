@@ -288,7 +288,7 @@ function Close()
 	$this->_enddoc();
 }
 
-function AddPage($orientation='', $size='', $rotation=0)
+function AddPage($orientation='', $size='', $rotation=0, $v1='')
 {
 	// Start a new page
 	if($this->state==3)
@@ -331,7 +331,7 @@ function AddPage($orientation='', $size='', $rotation=0)
 	$this->ColorFlag = $cf;
 	// Page header
 	$this->InHeader = true;
-	$this->Header();
+	$this->Header($v1);
 	$this->InHeader = false;
 	// Restore line width
 	if($this->LineWidth!=$lw)
@@ -357,7 +357,7 @@ function AddPage($orientation='', $size='', $rotation=0)
 	$this->ColorFlag = $cf;
 }
 
-function Header()
+function Header($v1)
 {
 	// To be implemented in your own inherited class
 }
