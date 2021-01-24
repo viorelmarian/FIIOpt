@@ -272,21 +272,26 @@
                         <h1>Courses</h1>
                         <form>
                             <div class="form-column" style="padding-top: 15px;">
+
                                 <div class="form-group col-md-6">
-                                    <label for="opt_name">Course Name</label>
-                                    <input type="text" class="form-control" id="opt_name" placeholder="Name" required>
+                                    <select id="inputCourseDownload" class="form-control" style="padding-left: 30px;">
+                                        <option selected>Choose a course</option>
+                                    </select><br>
+                                    <button type="button" class="btn btn-primary" onclick="pdfStudentsOfCourse()">Download</button>
                                 </div>
-                                <div class="form-group col-md-2">
-                                    <label for="opt_year">Study Year</label>
-                                    <input type="text" class="form-control" id="opt_year" placeholder="Year" required>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <button type="button" class="btn btn-primary" onclick="pdfStudents()">Download</button>
+                                <div class="form-group col-md-3">
+                                    <select id="inputYearDownload" class="form-control" style="padding-left: 30px;">
+                                        <option selected>Choose a year</option>
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                    </select><br>
+                                    <button type="button" class="btn btn-primary" onclick="pdfStudentsAssignations()">Download</button>
                                 </div>
                             </div>
                         </form>
                     </div>
-                    <div class="card-body form-box">
+                    <!-- <div class="card-body form-box">
                         <h1>Transfers</h1>
                         <form>
                             <div class="form-column" style="padding-top: 15px;">
@@ -307,7 +312,7 @@
                                 </div>
                             </div>
                         </form>
-                    </div>
+                    </div> -->
                     <div class="card-body form-box">
                         <h1>Actions</h1>
                         <button type="button" class="btn btn-primary" onclick="assignCourses()">Assign Courses</button>

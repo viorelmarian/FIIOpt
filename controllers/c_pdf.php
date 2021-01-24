@@ -8,7 +8,7 @@ class PDF extends FPDF
 {
     var $widths;
     var $aligns;
-    function Header($course_name)
+    function Header($course_name, $title, $header, $widths, $align)
     {
         $this->SetFont('Times', '', 12);
         $this->Cell(190, 10, 'Facultatea de Informatica Iasi', 0, 0, 'L');
@@ -24,7 +24,11 @@ class PDF extends FPDF
 
         $this->SetFont('Times', 'B', 15);
         $this->Ln(10);
-        $this->Cell(190, 10, 'Lista studentilor repartizati la disciplina optionala', 0, 0, 'C');
+        if ($this->CurOrientation == 'L') {
+            $this->Cell(400, 10, $title, 0, 0, 'C');
+        } else {
+            $this->Cell(190, 10, $title, 0, 0, 'C');
+        }
         $this->Ln(10);
         $this->Cell(190, 10, $course_name, 0, 0, 'C');
         // Line break
@@ -32,15 +36,10 @@ class PDF extends FPDF
 
 
         $this->SetFont('Times', 'B', 12);
-        $display_heading = array(
-            'nr_crt' => 'Nr. Crt.',
-            'student_name' => 'Nume si Prenume',
-            'year' => 'An studii',
-            'class' => 'Grupa'
-        );
-        $this->SetWidths(array(20, 100, 35, 35));
-        $this->SetAligns(array("C", "L", "C", "C"));
-        $this->Row($display_heading);
+
+        $this->SetWidths($widths);
+        $this->SetAligns($align);
+        $this->Row($header);
     }
     function SetWidths($w)
     {
@@ -59,6 +58,8 @@ class PDF extends FPDF
         //Calculate the height of the row
         $nb = 0;
         $i = 0;
+        // var_dump($data);
+        // die();
         foreach ($data as $data_line) {
             $nb = max($nb, $this->NbLines($this->widths[$i], $data_line));
             $i++;
@@ -165,6 +166,7 @@ class PDF extends FPDF
         }
         $display_line = array();
         $i = 0;
+        $display = array();
         foreach ($lines as $line) {
             $i++;
             $display_line["nr_crt"] = $i;
@@ -173,21 +175,97 @@ class PDF extends FPDF
             $display_line["class"] = $line['class'];
             $display[] = $display_line;
         }
-        // $a = 1;
-        // while ($a <= 100) {
-        //     $a++;
-        //     $display[] = $display_line;
-        // }
 
         $course_info = $courses->getById($course_id);
         $course_name = $course_info->fetch_assoc()["name"];
-        $this->AddPage('','',0, '"'.$course_name.'"');
+        $title = 'Lista studentilor repartizati la disciplina optionala';
+        $display_heading = array(
+            'nr_crt' => 'Nr. Crt.',
+            'student_name' => 'Nume si Prenume',
+            'year' => 'An studii',
+            'class' => 'Grupa'
+        );
+        $widths = array(20, 100, 35, 35);
+        $align = array("C", "L", "C", "C");
+        $this->AddPage('P', 'A4', 0, '"' . $course_name . '"', $title, $display_heading, $widths, $align);
         $this->AliasNbPages();
         $this->SetFont('Times', '', 12);
         $this->SetTitle("Optionale");
         $this->SetWidths(array(20, 100, 35, 35));
         $this->SetAligns(array("C", "L", "C", "C"));
         foreach ($display as $display_line) {
+            $this->Row($display_line);
+        }
+        $this->Output();
+    }
+
+    function downloadPDFassignedCourses($year)
+    {
+        if (!isset($db)) {
+            //Create db connection
+            $db = new database_conn;
+            $db->connect();
+        }
+        if (!isset($assignations)) {
+            //Create model instance
+            $assignations = new m_assignations($db->conn);
+        }
+        $result = $assignations->getAllAssignationsByYear($year);
+        $data = array();
+        foreach ($result as $line) {
+            $data_line['nr_crt'] = $line['nr_crt'];
+            $data_line['student_name'] = $line['student_name'];
+            $data_line['year'] = $line['year'];
+            $data_line['class'] = $line['class'];
+            if (array_key_exists('course_1', $line)) {
+                $data_line['course_1'] = $line['course_1'];
+            } else {
+                $data_line['course_1'] = '';
+            }
+            if (array_key_exists('course_2', $line)) {
+                $data_line['course_2'] = $line['course_2'];
+            } else {
+                $data_line['course_2'] = '';
+            }
+            if (array_key_exists('course_3', $line)) {
+                $data_line['course_3'] = $line['course_3'];
+            } else {
+                $data_line['course_3'] = '';
+            }
+            if (array_key_exists('course_4', $line)) {
+                $data_line['course_4'] = $line['course_4'];
+            } else {
+                $data_line['course_4'] = '';
+            }
+            if (array_key_exists('course_5', $line)) {
+                $data_line['course_5'] = $line['course_5'];
+            } else {
+                $data_line['course_5'] = '';
+            }
+            $data[] = $data_line;
+        }
+        $display_heading = array(
+            'nr_crt' => 'Nr. Crt.',
+            'student_name' => 'Nume si Prenume',
+            'year' => 'An studii',
+            'class' => 'Grupa',
+            'course_1' => 'Optional 1',
+            'course_2' => 'Optional 2',
+            'course_3' => 'Optional 3',
+            'course_4' => 'Optional 4',
+            'course_5' => 'Optional 5'
+        );
+
+        $title = 'Lista studentilor repartizati la disciplinele optionale';
+        $widths = array(20, 50, 20, 20, 58, 58, 58, 58, 58);
+        $align = array("C", "C", "C", "C", "L", "L", "L", "L", "L");
+        $this->AddPage('L', 'A3', 0, '', $title, $display_heading, $widths, $align);
+        $this->AliasNbPages();
+        $this->SetFont('Times', '', 12);
+        $this->SetTitle("Optionale");
+        $this->SetWidths(array(20, 50, 20, 20, 58, 58, 58, 58, 58));
+        $this->SetAligns(array("C", "L", "C", "C", "L", "L", "L", "L", "L"));
+        foreach ($data as $display_line) {
             $this->Row($display_line);
         }
         $this->Output();

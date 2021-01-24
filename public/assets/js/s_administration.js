@@ -277,7 +277,7 @@ function getCourses() {
                 var data = JSON.parse(response);
 
                 const s = document.getElementById('inputCourse')
-
+                const d = document.getElementById('inputCourseDownload')
                 i = 0
                 data.forEach(item => {
                     i++
@@ -286,6 +286,15 @@ function getCourses() {
                     o.innerHTML = i + '.   ' + item.name
 
                     s.appendChild(o)
+                })
+                i = 0
+                data.forEach(item => {
+                    i++
+                    const o = document.createElement("option")
+                    o.setAttribute("value", item.course_id)
+                    o.innerHTML = i + '.   ' + item.name
+
+                    d.appendChild(o)
                 })
             }
         })
@@ -663,4 +672,14 @@ function deleteDependencies() {
             }
         })
     })
+}
+
+function pdfStudentsOfCourse() {
+    var course_id = document.getElementById('inputCourseDownload').value;
+    window.open("http://fiiopt.test/pdf/downloadPDFforCourse/" + course_id);
+}
+
+function pdfStudentsAssignations() {
+    var_year = document.getElementById('inputYearDownload').value;
+    window.open("http://fiiopt.test/pdf/downloadPDFassignedCourses/" + var_year);
 }

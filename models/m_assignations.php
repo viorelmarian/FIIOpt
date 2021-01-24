@@ -90,4 +90,35 @@ class m_assignations {
         $stmt->execute();
         return $stmt->get_result();
     }
+    function getAllAssignationsByYear($year) {
+        $stmt = $this->conn->prepare("  SELECT  `student_id`,`first_name`,`last_name`,`father_init`,`year`,`class`
+                                        FROM    `students_info`
+                                        WHERE   `year` = ?");
+        $stmt->bind_param("i", $year);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $data = array();
+
+        $nr_crt = 0;
+        while($row = $result->fetch_assoc()) {
+            $nr_crt++;
+            $row["nr_crt"] = $nr_crt;
+            $row["student_name"] = $row['last_name'] . ' ' . $row['father_init'] . '. ' . $row['first_name'];
+            $stmt = $this->conn->prepare("  SELECT  `name`
+                                            FROM    `courses`
+                                            JOIN    `assigned_courses`
+                                            ON      `courses`.`course_id` = `assigned_courses`.`course_id`
+                                            WHERE   `student_id` = ?");
+            $stmt->bind_param("s", $row["student_id"]);
+            $stmt->execute();
+            $result2 = $stmt->get_result();
+            $index = 0;
+            while($row2 = $result2->fetch_assoc()){
+                $index++;
+                $row["course_" . $index] = $row2["name"];
+            }
+            $data[] = $row; 
+        }
+        return $data;
+    }
 }
